@@ -31,17 +31,6 @@ vim.opt.tabstop = 2             -- Number of spaces for a tab character
 vim.opt.smartindent = true      -- Automatically indent new lines
 vim.opt.autoindent = true       -- Copy indentation from the previous line
 
--- Use Neotree on enter
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    -- Check if the argument is a directory
-    local directory = vim.fn.isdirectory(vim.fn.expand("%:p"))
-    if directory == 1 then
-      require("neo-tree.command").execute({ toggle = false, dir = vim.fn.expand("%:p") })
-    end
-  end,
-})
-
 -- Automatically return to the last editing position when reopening a file
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function()
