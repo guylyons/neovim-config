@@ -24,6 +24,10 @@ vim.g.maplocalleader = "\\"
 -- My things
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 
+-- Clipboard
+vim.opt.clipboard = "unnamedplus"
+
+
 -- General indentation settings
 vim.opt.expandtab = true        -- Use spaces instead of tabs
 vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
@@ -46,6 +50,26 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
+    {
+      "marko-cerovac/material.nvim",
+      lazy = false, -- Load it immediately
+      priority = 1000, -- Load this before other plugins to apply the theme
+      config = function()
+        require('material').setup({
+          contrast = {
+            terminal = false, -- Enable contrast for terminal
+            sidebars = true, -- Enable contrast for sidebars like NvimTree
+            floating_windows = true, -- Enable contrast for floating windows
+          },
+          styles = {
+            comments = { italic = true },
+            keywords = { bold = true },
+            functions = { bold = true, italic = true },
+          },
+        })
+        vim.cmd("colorscheme material-deep-ocean") -- Set the theme
+      end,
+    },
     {
       'nvim-telescope/telescope.nvim', tag = '0.1.8',
       dependencies = { 'nvim-lua/plenary.nvim' }
