@@ -1,3 +1,7 @@
+-- Guy Lyons
+-- Custom NeoVim configuration
+-- 2025
+--
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
