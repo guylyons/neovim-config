@@ -130,3 +130,6 @@ vim.opt.foldenable = true  -- Enable folding
 vim.opt.foldlevel = 99     -- Expand all folds by default
 local vim = vim
 local api = vim.api
+
+vim.opt.relativenumber = true -- Show relative line numbers
+vim.opt.number = true         -- Show the current line's absolute number
