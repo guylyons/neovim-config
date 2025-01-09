@@ -107,6 +107,23 @@ require("lazy").setup({
         },
       },
     },
+    {
+      "williamboman/mason.nvim",
+      config = function()
+        require("mason").setup()
+      end,
+    },
+    {
+      -- Completion Plugins
+      'hrsh7th/nvim-cmp',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
+      -- Snippet Plugins for `vsnip`
+      'hrsh7th/cmp-vsnip',
+      'hrsh7th/vim-vsnip',
+    },
   },
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },
@@ -129,3 +146,47 @@ vim.opt.foldlevel = 3     -- Expand all folds by default
 
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.number = true         -- Show the current line's absolute number
+
+-- Completion setup for `nvim-cmp`
+local cmp = require('cmp')
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users
+      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users
+      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' }, -- For `vsnip` users
+  }, {
+    { name = 'buffer' },
+  }),
+})
+
+-- For `/` and `?` in cmdline
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  },
+})
+
+-- For `:` in cmdline
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  }),
+})
