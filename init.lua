@@ -90,6 +90,23 @@ require("lazy").setup({
         -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
       }
     },
+    {
+      "neovim/nvim-lspconfig",
+      config = function()
+        require('lspconfig').lua_ls.setup {}
+      end,
+    },
+    {
+      "folke/lazydev.nvim",
+      ft = "lua", -- only load on lua files
+      opts = {
+        library = {
+          -- See the configuration section for more details
+          -- Load luvit types when the `vim.uv` word is found
+          { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+        },
+      },
+    },
   },
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },
