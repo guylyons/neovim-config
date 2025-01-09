@@ -1,7 +1,7 @@
 -- Guy Lyons
 -- Custom NeoVim configuration
 -- 2025
---
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -21,7 +21,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
--- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -92,20 +91,22 @@ require("lazy").setup({
     },
     {
       "neovim/nvim-lspconfig",
+      dependencies = {
+        {
+          "folke/lazydev.nvim",
+          ft = "lua", -- only load on lua files
+          opts = {
+            library = {
+              -- See the configuration section for more details
+              -- Load luvit types when the `vim.uv` word is found
+              { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+          },
+        },
+      },
       config = function()
         require('lspconfig').lua_ls.setup {}
       end,
-    },
-    {
-      "folke/lazydev.nvim",
-      ft = "lua", -- only load on lua files
-      opts = {
-        library = {
-          -- See the configuration section for more details
-          -- Load luvit types when the `vim.uv` word is found
-          { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-        },
-      },
     },
     {
       "williamboman/mason.nvim",
@@ -190,3 +191,4 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' }
   }),
 })
+
