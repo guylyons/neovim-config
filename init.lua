@@ -109,7 +109,7 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help ta
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = true  -- Enable folding
-vim.opt.foldlevel = 99     -- Expand all folds by default
+vim.opt.foldlevel = 3     -- Expand all folds by default
 local vim = vim
 local api = vim.api
 
