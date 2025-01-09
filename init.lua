@@ -31,7 +31,6 @@ vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
 
-
 -- General indentation settings
 vim.opt.expandtab = true        -- Use spaces instead of tabs
 vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
@@ -110,8 +109,6 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = true  -- Enable folding
 vim.opt.foldlevel = 3     -- Expand all folds by default
-local vim = vim
-local api = vim.api
 
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.number = true         -- Show the current line's absolute number
