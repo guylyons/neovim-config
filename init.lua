@@ -210,14 +210,14 @@ cmp.setup.cmdline({ '/', '?' }, {
 })
 
 -- For `:` in cmdline
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-    { name = 'cmdline' }
-  }),
-})
+-- cmp.setup.cmdline(':', {
+--   mapping = cmp.mapping.preset.cmdline(),
+--   sources = cmp.config.sources({
+--     { name = 'path' }
+--   }, {
+--     { name = 'cmdline' }
+--   }),
+-- })
 
 -- Search highlight fix
 vim.api.nvim_create_autocmd('CursorMoved', {
