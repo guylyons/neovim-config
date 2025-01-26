@@ -158,6 +158,8 @@ require("lazy").setup({
 
 local fzf = require('fzf-lua')
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
+vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
+vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
 
 -- Telescope default keymap
 local builtin = require('telescope.builtin')
