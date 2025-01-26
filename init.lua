@@ -156,6 +156,7 @@ require("lazy").setup({
   checker = { enabled = true },
 })
 
+-- FZF lua
 local fzf = require('fzf-lua')
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
 vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
@@ -222,6 +223,7 @@ cmp.setup.cmdline({ '/', '?' }, {
 -- })
 
 -- Search highlight fix
+-- turns off keyword highlighting after cursor movement
 vim.api.nvim_create_autocmd('CursorMoved', {
   group = vim.api.nvim_create_augroup('auto-hlsearch', { clear = true }),
   callback = function ()
