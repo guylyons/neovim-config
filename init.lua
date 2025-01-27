@@ -24,8 +24,16 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- My things
+-- My keybindings
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
+-- Save
+vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
+-- Quit
+vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
+-- Lazy Update
+vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
+vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
@@ -160,18 +168,6 @@ require("lazy").setup({
 local fzf = require('fzf-lua')
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
 vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
-
-vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
-vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
-
--- Save
-vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
-
--- Quit
-vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
-
--- Lazy Update
-vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
 
 -- Telescope default keymap
 local builtin = require('telescope.builtin')
