@@ -163,6 +163,9 @@ vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
 vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
 vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
 
+-- Leader + enter :w
+vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
+
 -- Telescope default keymap
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>p', builtin.find_files, { desc = 'Telescope find files' })
