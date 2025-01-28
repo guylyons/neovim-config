@@ -32,7 +32,9 @@ vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
 -- Lazy Update
 vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
+-- Neogit
 vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
+-- Neotree
 vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
 
 -- Clipboard
