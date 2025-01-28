@@ -24,41 +24,6 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- My keybindings
-vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
--- Save
-vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
--- Quit
-vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
--- Lazy Update
-vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
--- Neogit
-vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
--- Neotree
-vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
-
--- Clipboard
-vim.opt.clipboard = "unnamedplus"
-
--- General indentation settings
-vim.opt.expandtab = true        -- Use spaces instead of tabs
-vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
-vim.opt.tabstop = 2             -- Number of spaces for a tab character
-vim.opt.smartindent = true      -- Automatically indent new lines
-vim.opt.autoindent = true       -- Copy indentation from the previous line
-
--- Automatically return to the last editing position when reopening a file
-vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function()
-    local mark = vim.api.nvim_buf_get_mark(0, '"')
-    local line = mark[1]
-    local col = mark[2]
-    if line > 0 and line <= vim.api.nvim_buf_line_count(0) then
-      vim.api.nvim_win_set_cursor(0, { line, col })
-    end
-  end,
-})
-
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -166,6 +131,52 @@ require("lazy").setup({
   checker = { enabled = false },
 })
 
+-- My keybindings
+vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
+-- Save
+vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
+-- Quit
+vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
+-- Lazy Update
+vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
+-- Neogit
+vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
+-- Neotree
+vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
+
+-- Clipboard
+vim.opt.clipboard = "unnamedplus"
+
+-- General indentation settings
+vim.opt.expandtab = true        -- Use spaces instead of tabs
+vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
+vim.opt.tabstop = 2             -- Number of spaces for a tab character
+vim.opt.smartindent = true      -- Automatically indent new lines
+vim.opt.autoindent = true       -- Copy indentation from the previous line
+
+-- Automatically return to the last editing position when reopening a file
+vim.api.nvim_create_autocmd("BufReadPost", {
+  callback = function()
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local line = mark[1]
+    local col = mark[2]
+    if line > 0 and line <= vim.api.nvim_buf_line_count(0) then
+      vim.api.nvim_win_set_cursor(0, { line, col })
+    end
+  end,
+})
+
+-- Search highlight fix
+-- turns off keyword highlighting after cursor movement
+vim.api.nvim_create_autocmd('CursorMoved', {
+  group = vim.api.nvim_create_augroup('auto-hlsearch', { clear = true }),
+  callback = function ()
+    if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
+      vim.schedule(function () vim.cmd.nohlsearch() end)
+    end
+  end
+})
+
 -- FZF lua
 local fzf = require('fzf-lua')
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
@@ -232,13 +243,3 @@ cmp.setup.cmdline({ '/', '?' }, {
 --   }),
 -- })
 
--- Search highlight fix
--- turns off keyword highlighting after cursor movement
-vim.api.nvim_create_autocmd('CursorMoved', {
-  group = vim.api.nvim_create_augroup('auto-hlsearch', { clear = true }),
-  callback = function ()
-    if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
-      vim.schedule(function () vim.cmd.nohlsearch() end)
-    end
-  end
-})
