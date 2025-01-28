@@ -167,7 +167,7 @@ require("lazy").setup({
 -- FZF lua
 local fzf = require('fzf-lua')
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
-vim.keymap.set('n', '<leader>k', fzf.blines, { desc = 'Fzf lines' })
+vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
 
 -- Telescope default keymap
 local builtin = require('telescope.builtin')
@@ -181,7 +181,7 @@ vim.keymap.set('n', '<leader>v', builtin.registers, { desc = 'Telescope help tag
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = true  -- Enable folding
-vim.opt.foldlevel = 3     -- Expand all folds by default
+vim.opt.foldlevel = 1     -- Expand all folds by default
 
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.number = true         -- Show the current line's absolute number
