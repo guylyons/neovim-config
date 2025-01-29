@@ -123,6 +123,41 @@ require("lazy").setup({
         "echasnovski/mini.pick",         -- optional
       },
       config = true
+    },
+    ---@type LazySpec
+    {
+      "mikavilpas/yazi.nvim",
+      event = "VeryLazy",
+      keys = {
+        -- 👇 in this section, choose your own keymappings!
+        {
+          "<leader>-",
+          mode = { "n", "v" },
+          "<cmd>Yazi<cr>",
+          desc = "Open yazi at the current file",
+        },
+        {
+          -- Open in the current working directory
+          "<leader>cw",
+          "<cmd>Yazi cwd<cr>",
+          desc = "Open the file manager in nvim's working directory",
+        },
+        {
+          -- NOTE: this requires a version of yazi that includes
+          -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
+          "<c-up>",
+          "<cmd>Yazi toggle<cr>",
+          desc = "Resume the last yazi session",
+        },
+      },
+      ---@type YaziConfig
+      opts = {
+        -- if you want to open yazi instead of netrw, see below for more info
+        open_for_directories = false,
+        keymaps = {
+          show_help = "<f1>",
+        },
+      },
     }
   },
   -- colorscheme that will be used when installing plugins.
@@ -143,6 +178,8 @@ vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = 
 vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
 -- Neotree
 vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
+-- Yazi
+vim.keymap.set('n', '<leader>y', ':Yazi<CR>', { desc = 'Opens Yazi' })
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
