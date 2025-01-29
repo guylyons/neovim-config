@@ -179,7 +179,7 @@ vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
 -- Neotree
 vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
 -- Yazi
-vim.keymap.set('n', '<leader>y', ':Yazi<CR>', { desc = 'Opens Yazi' })
+vim.keymap.set('n', '<leader>j', ':Yazi<CR>', { desc = 'Opens Yazi' })
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"
