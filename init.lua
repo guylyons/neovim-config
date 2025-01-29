@@ -136,7 +136,7 @@ vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 -- Save
 vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
 -- Quit
-vim.keymap.set('n', '<leader>;', ':q<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>;', ':qa<CR>', { noremap = true, silent = true })
 -- Lazy Update
 vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
 -- Neogit
