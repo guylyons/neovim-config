@@ -55,32 +55,14 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter",
       config = function()
         local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-        parser_config.blade = {
-          install_info = {
-            url = "https://github.com/EmranMR/tree-sitter-blade",
-            files = { "src/parser.c" },
-            branch = "main",
-          },
-          filetype = "blade, php",
-        }
       end
-    },
-    {
-      "nvim-neo-tree/neo-tree.nvim",
-      branch = "v3.x",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-        "MunifTanjim/nui.nvim",
-        -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-      }
     },
     {
       "neovim/nvim-lspconfig",
       dependencies = {
         {
           "folke/lazydev.nvim",
-          ft = "lua", -- only load on lua files
+          ft = "lua",
           opts = {
             library = {
               -- See the configuration section for more details
@@ -176,8 +158,6 @@ vim.keymap.set('n', '<leader>;', ':qa<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
 -- Neogit
 vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
--- Neotree
-vim.keymap.set('n', '<leader>t', ':Neotree toggle<CR>', { desc = 'Opens Neotree' })
 -- Yazi
 vim.keymap.set('n', '<leader>j', ':Yazi<CR>', { desc = 'Opens Yazi' })
 -- Ex
