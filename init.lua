@@ -94,6 +94,32 @@ require("lazy").setup({
       'hrsh7th/vim-vsnip',
     },
     {
+      "lewis6991/gitsigns.nvim",
+      config = function()
+        -- Define the highlights separately
+        vim.api.nvim_set_hl(0, 'GitSignsAdd', { link = 'GitGutterAdd' })
+        vim.api.nvim_set_hl(0, 'GitSignsChange', { link = 'GitGutterChange' })
+        vim.api.nvim_set_hl(0, 'GitSignsDelete', { link = 'GitGutterDelete' })
+        vim.api.nvim_set_hl(0, 'GitSignsTopdelete', { link = 'GitGutterDelete' })
+        vim.api.nvim_set_hl(0, 'GitSignsChangedelete', { link = 'GitGutterChangeDelete' })
+
+        -- Configure gitsigns
+        require('gitsigns').setup {
+          signs = {
+            add = { text = '▍' },
+            change = { text = '▍' },
+            delete = { text = '▾' },
+            topdelete = { text = '▾' },
+            changedelete = { text = '▾' },
+          },
+          numhl = true, -- Highlight line numbers
+          linehl = false, -- Highlight the whole line
+          current_line_blame = false, -- Show blame on the current line
+          preview_config = { border = 'rounded' }, -- Border style for previews
+        }
+      end
+    },
+    {
       "NeogitOrg/neogit",
       dependencies = {
         "nvim-lua/plenary.nvim",         -- required
@@ -213,7 +239,7 @@ vim.keymap.set('n', '<leader>v', builtin.registers, { desc = 'Telescope help tag
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = true  -- Enable folding
-vim.opt.foldlevel = 1     -- Expand all folds by default
+vim.opt.foldlevel = 1   -- Expand all folds by default
 
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.number = true         -- Show the current line's absolute number
@@ -225,8 +251,6 @@ cmp.setup({
   snippet = {
     expand = function(args)
       vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users
-      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users
-      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users
     end,
   },
   mapping = cmp.mapping.preset.insert({
