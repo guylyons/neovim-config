@@ -1,0 +1,60 @@
+-- My keybindings
+vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
+-- Save
+vim.keymap.set('n', '<leader><CR>', ':w<CR>', { noremap = true, silent = true })
+-- Quit
+vim.keymap.set('n', '<leader>;', ':qa<CR>', { noremap = true, silent = true })
+-- Lazy Update
+vim.keymap.set('n', '<leader>u', ':Lazy update<CR>', { noremap = true, silent = true })
+-- Neogit
+vim.keymap.set('n', '<leader>m', ':Neogit<CR>', { desc = 'Fzf lines' })
+-- Yazi
+vim.keymap.set('n', '<leader>j', ':Yazi<CR>', { desc = 'Opens Yazi' })
+-- Ex
+vim.keymap.set('n', '<leader>e', ':Ex<CR>', { desc = 'Opens Ex' })
+
+-- Clipboard
+vim.opt.clipboard = "unnamedplus"
+
+-- General indentation settings
+vim.opt.expandtab = true        -- Use spaces instead of tabs
+vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
+vim.opt.tabstop = 2             -- Number of spaces for a tab character
+vim.opt.smartindent = true      -- Automatically indent new lines
+vim.opt.autoindent = true       -- Copy indentation from the previous line
+
+-- Automatically return to the last editing position when reopening a file
+vim.api.nvim_create_autocmd("BufReadPost", {
+  callback = function()
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local line = mark[1]
+    local col = mark[2]
+    if line > 0 and line <= vim.api.nvim_buf_line_count(0) then
+      vim.api.nvim_win_set_cursor(0, { line, col })
+    end
+  end,
+})
+
+-- Search highlight fix
+-- turns off keyword highlighting after cursor movement
+vim.api.nvim_create_autocmd('CursorMoved', {
+  group = vim.api.nvim_create_augroup('auto-hlsearch', { clear = true }),
+  callback = function ()
+    if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
+      vim.schedule(function () vim.cmd.nohlsearch() end)
+    end
+  end
+})
+
+-- FZF lua
+local fzf = require('fzf-lua')
+vim.keymap.set('n', '<leader>f', fzf.files, { desc = 'Fzf files' })
+vim.keymap.set('n', '<leader>k', fzf.lines, { desc = 'Fzf lines' })
+
+-- Telescope default keymap
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>p', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>g', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>b', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>h', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>v', builtin.registers, { desc = 'Telescope help tags' })
