@@ -12,3 +12,24 @@ vim.opt.foldlevel = 1   -- Expand all folds by default
 vim.opt.relativenumber = true -- Show relative line numbers
 vim.opt.number = true         -- Show the current line's absolute number
 
+-- Clipboard
+vim.opt.clipboard = "unnamedplus"
+
+-- General indentation settings
+vim.opt.expandtab = true        -- Use spaces instead of tabs
+vim.opt.shiftwidth = 2          -- Number of spaces for each indentation level
+vim.opt.tabstop = 2             -- Number of spaces for a tab character
+vim.opt.smartindent = true      -- Automatically indent new lines
+vim.opt.autoindent = true       -- Copy indentation from the previous line
+
+-- Search highlight fix
+-- turns off keyword highlighting after cursor movement
+vim.api.nvim_create_autocmd('CursorMoved', {
+  group = vim.api.nvim_create_augroup('auto-hlsearch', { clear = true }),
+  callback = function ()
+    if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
+      vim.schedule(function () vim.cmd.nohlsearch() end)
+    end
+  end
+})
+
