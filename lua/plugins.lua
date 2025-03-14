@@ -143,11 +143,6 @@ require("lazy").setup({
         },
       },
     },
-    {
-      "pmizio/typescript-tools.nvim",
-      dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-      opts = {},
-    }
   },
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },
