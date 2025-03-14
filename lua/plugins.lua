@@ -142,6 +142,11 @@ require("lazy").setup({
           show_help = "<f1>",
         },
       },
+    },
+    {
+      "pmizio/typescript-tools.nvim",
+      dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+      opts = {},
     }
   },
   -- colorscheme that will be used when installing plugins.
