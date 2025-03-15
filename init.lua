@@ -20,6 +20,14 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("settings")
-require("plugins")
+require("lazy").setup({
+  spec = {
+    { import = "plugins" },
+  },
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { "habamax" } },
+  -- automatically check for plugin updates
+  checker = { enabled = false },
+})
 require("keybindings")
 require("completion")
