@@ -30,4 +30,4 @@ require("lazy").setup({
   checker = { enabled = false },
 })
 require("keybindings")
-require("completion")
+require("cmp-config")
