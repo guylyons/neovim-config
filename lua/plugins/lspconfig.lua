@@ -14,6 +14,13 @@ return {
     },
   },
   config = function()
-    require('lspconfig').lua_ls.setup {}
+    -- Lua language server setup
+    require'lspconfig'.lua_ls.setup{}
+    -- Python
+    require'lspconfig'.pyright.setup{}
+    -- Bash
+    require'lspconfig'.bashls.setup{}
+    -- Deno
+    require'lspconfig'.denols.setup{}
   end,
 }
