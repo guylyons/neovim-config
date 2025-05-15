@@ -10,10 +10,8 @@ vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = 
 vim.keymap.set("n", "<leader>u", ":Lazy update<CR>", { noremap = true, silent = true })
 -- Neogit
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Fzf lines" })
--- Yazi
-vim.keymap.set("n", "<leader>j", ":Yazi<CR>", { desc = "Opens Yazi" })
 -- Ex
-vim.keymap.set("n", "<leader>e", ":Ex<CR>", { desc = "Opens Ex" })
+vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
 
 -- FZF lua
 local fzf = require("fzf-lua")
