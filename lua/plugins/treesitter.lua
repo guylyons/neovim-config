@@ -1,6 +1,11 @@
 return {
-  "nvim-treesitter/nvim-treesitter",
-  config = function()
-    local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-  end
+	"nvim-treesitter/nvim-treesitter",
+	build = ":TSUpdate",
+	config = function()
+		require("nvim-treesitter.configs").setup({
+			ensure_installed = { "tsx", "typescript", "javascript", "html", "css" },
+			highlight = { enable = true },
+			indent = { enable = true }, -- This is the key line
+		})
+	end,
 }
