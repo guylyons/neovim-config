@@ -15,11 +15,11 @@ return {
 	},
 	config = function()
 		-- Lua language server setup
-		require("lspconfig").lua_ls.setup({})
+		vim.lsp.enable("lua_ls")
 		-- Python
-		require("lspconfig").pyright.setup({})
+		vim.lsp.enable("pyright")
 		-- Bash
-		require("lspconfig").bashls.setup({})
+		vim.lsp.enable("bashls")
 
 		vim.diagnostic.config({
 			virtual_text = true,
