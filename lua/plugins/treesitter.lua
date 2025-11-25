@@ -6,7 +6,7 @@ return {
       ensure_installed = {
         "lua",
         "javascript",
-        "typescript", -- optional but useful
+        "typescript",
       },
       highlight = {
         enable = true,
