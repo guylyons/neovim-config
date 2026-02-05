@@ -5,7 +5,7 @@ vim.g.maplocalleader = "\\"
 
 -- Folds with Tree-sitter
 vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldexpr = "v:lua.vim.treesitter.get_fold_indic(0)"
 vim.opt.foldenable = true  -- Enable folding
 vim.opt.foldlevel = 1   -- Expand all folds by default
 
