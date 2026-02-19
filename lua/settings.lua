@@ -56,3 +56,20 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 		vim.bo.filetype = "twig"
 	end,
 })
+
+-- Drupal filetype detection
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+	pattern = {
+		"*.module",
+		"*.theme",
+		"*.install",
+		"*.profile",
+		"*.info",
+		"*.routing.yml",
+		"*.services.yml",
+		"*.links.*.yml",
+	},
+	callback = function()
+		vim.bo.filetype = "php"
+	end,
+})

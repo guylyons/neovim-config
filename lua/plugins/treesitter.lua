@@ -8,6 +8,8 @@ return {
         "javascript",
         "typescript",
         "twig",
+        "php",
+        "yaml",
       },
       highlight = {
         enable = true,

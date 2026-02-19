@@ -21,6 +21,23 @@ return {
 		-- Bash
 		vim.lsp.enable("bashls")
 
+		-- PHP/Drupal
+		vim.lsp.enable("phpactor")
+
+		-- Emmet
+		vim.lsp.enable("emmet_language_server")
+
+		-- YAML (Drupal .yml files)
+		vim.lsp.enable("yaml_language_server")
+
+		-- Custom: Drupal Language Server (requires manual installation)
+		vim.lsp.config.drupal_ls = {
+			cmd = { "drupal_ls" },
+			filetypes = { "php", "twig", "yaml" },
+			root_markers = { "composer.json", ".git" },
+		}
+		vim.lsp.enable("drupal_ls")
+
 		vim.diagnostic.config({
 			virtual_text = true,
 			signs = false,
