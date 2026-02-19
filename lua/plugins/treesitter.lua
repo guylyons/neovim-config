@@ -7,6 +7,7 @@ return {
         "lua",
         "javascript",
         "typescript",
+        "twig",
       },
       highlight = {
         enable = true,

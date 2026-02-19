@@ -46,3 +46,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 vim.opt.runtimepath:append(vim.fn.stdpath("config") .. "/lua")
+
+-- Filetype detection for Twig
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*.twig",
+  callback = function()
+    vim.bo.filetype = "twig"
+  end,
+})
