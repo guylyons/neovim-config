@@ -25,6 +25,7 @@ require("lazy").setup({
 		{ import = "plugins" },
 	},
 	checker = { enabled = false },
+	notify = { enabled = false },
 })
 require("keybindings")
 require("cmp-config")
