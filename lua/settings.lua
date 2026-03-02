@@ -2,6 +2,7 @@
 -- loading lazy.nvim so that mappings are correct.
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.opt.wrap = false
 
 -- Folds with Tree-sitter
 vim.opt.foldmethod = "expr"
