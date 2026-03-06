@@ -7,6 +7,9 @@ return {
 			ensure_installed = {
 				"phpactor",
 			},
+			automatic_enable = {
+				exclude = { "ts_ls" },
+			},
 		})
 	end,
 }
