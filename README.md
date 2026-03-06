@@ -33,11 +33,13 @@ The config only enables LSP servers if their executables are available in `PATH`
 - Python: `pyright-langserver`
 - Bash: `bash-language-server`
 - PHP: `phpactor`
-- Emmet: `emmet-language-server`
+- Emmet LSP: `emmet-language-server`
 - YAML: `yaml-language-server`
 - Drupal: `drupal_ls`
 
 ### TypeScript and React
+
+Inline Emmet abbreviation expansion comes from `mattn/emmet-vim`; in HTML-like buffers, typing an abbreviation such as `div.card` and pressing `<Tab>` expands it.
 
 TypeScript support uses `pmizio/typescript-tools.nvim`, not `ts_ls`.
 
@@ -93,7 +95,7 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - `<leader>b`: Telescope buffers
 - `<leader>h`: Telescope help
 - `<leader>v`: Telescope registers
-- `<leader>xe`: Emmet wrap abbreviation
+- `<Tab>`: expand Emmet abbreviations in HTML/CSS/template buffers
 
 ## Structure
 
