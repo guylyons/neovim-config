@@ -1,0 +1,110 @@
+# Neovim Config
+
+Personal Neovim config built around `lazy.nvim`, native Neovim 0.11 LSP, and a small plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
+
+## Requirements
+
+- Neovim 0.11+
+- Git
+- A working `node` and `npm`
+- Optional language servers/formatters installed on your machine
+
+This config bootstraps `lazy.nvim` automatically on first launch.
+
+## Highlights
+
+- Theme: `material-deep-ocean`
+- Plugin manager: `lazy.nvim`
+- Completion: `nvim-cmp` + `vim-vsnip`
+- Fuzzy finding: `fzf-lua` and `telescope.nvim`
+- Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
+- Formatting: `conform.nvim`
+- Syntax: `nvim-treesitter`
+- Drupal support: `drupal.nvim`
+- TypeScript LSP: `typescript-tools.nvim`
+
+## Language Support
+
+### Enabled when installed
+
+The config only enables LSP servers if their executables are available in `PATH`.
+
+- Lua: `lua-language-server`
+- Python: `pyright-langserver`
+- Bash: `bash-language-server`
+- PHP: `phpactor`
+- Emmet: `emmet-language-server`
+- YAML: `yaml-language-server`
+- Drupal: `drupal_ls`
+
+### TypeScript and React
+
+TypeScript support uses `pmizio/typescript-tools.nvim`, not `ts_ls`.
+
+Important details:
+
+- `mason-lspconfig` is configured to exclude `ts_ls` auto-enable to avoid conflicts.
+- Neovim prepends Homebrew and the default NVM Node bin path at startup if `node`/`npm` are missing.
+- `tsx` is included in Tree-sitter, so `.tsx` highlighting works.
+
+If TypeScript or React stops working, check:
+
+1. `:checkhealth`
+2. `:echo exepath('node')`
+3. `:echo exepath('npm')`
+4. `:LspInfo`
+
+## Formatters
+
+Configured through `conform.nvim`:
+
+- Lua: `stylua`
+- Python: `isort`, `black`
+- Rust: `rustfmt`
+- JavaScript: `prettierd`, fallback `prettier`
+
+## Tree-sitter Parsers
+
+Installed parsers:
+
+- `lua`
+- `javascript`
+- `typescript`
+- `tsx`
+- `twig`
+- `php`
+- `yaml`
+
+## Keymaps
+
+Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua):
+
+- `jj`: leave insert mode
+- `<leader><CR>`: save
+- `<leader>;`: quit all
+- `<leader>O`: open current file directory in Finder
+- `<leader>u`: `:Lazy update`
+- `<leader>m`: open Neogit
+- `<leader>j`: open `:Ex`
+- `<leader>f`: FZF files
+- `<leader>k`: FZF buffer lines
+- `<leader>p`: Telescope find files
+- `<leader>g`: Telescope live grep
+- `<leader>b`: Telescope buffers
+- `<leader>h`: Telescope help
+- `<leader>v`: Telescope registers
+- `<leader>xe`: Emmet wrap abbreviation
+
+## Structure
+
+- [init.lua](/Users/guy/.config/nvim/init.lua): bootstrap and plugin loading
+- [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
+- [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua): custom mappings
+- [lua/cmp-config.lua](/Users/guy/.config/nvim/lua/cmp-config.lua): completion config
+- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs
+
+## Notes
+
+- This config uses native `vim.lsp.enable()` instead of older `lspconfig.setup()` patterns.
+- Missing external executables are skipped instead of throwing startup errors.
+- Drupal file patterns like `*.module`, `*.theme`, and Drupal YAML files are forced to the expected filetypes in [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua).
