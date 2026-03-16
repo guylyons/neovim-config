@@ -15,8 +15,12 @@ vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
 
 -- FZF lua
 local fzf = require("fzf-lua")
-vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Fzf files" })
-vim.keymap.set("n", "<leader>k", function()
+vim.keymap.set("n", "<leader>ff", fzf.files, { desc = "Fzf files" })
+vim.keymap.set("n", "<leader>fg", function()
+	fzf.live_grep({ cwd = telescope_cwd() })
+end, { desc = "Fzf live grep (current dir)" })
+vim.keymap.set("n", "<leader>fb", fzf.buffers, { desc = "Fzf buffers" })
+vim.keymap.set("n", "<leader>fk", function()
 	fzf.blines({
 		fzf_opts = {
 			["--exact"] = "",
@@ -57,6 +61,9 @@ end, { desc = "Telescope find files (project root)" })
 vim.keymap.set("n", "<leader>g", function()
 	builtin.live_grep({ cwd = telescope_cwd() })
 end, { desc = "Telescope live grep (current dir)" })
+vim.keymap.set("n", "<leader>G", function()
+	builtin.live_grep({ cwd = telescope_root() })
+end, { desc = "Telescope live grep (project root)" })
 vim.keymap.set("n", "<leader>b", function()
 	builtin.buffers({
 		sort_lastused = true,
