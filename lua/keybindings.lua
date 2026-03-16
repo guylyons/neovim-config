@@ -33,12 +33,29 @@ local function telescope_cwd()
 	return vim.uv.cwd()
 end
 
+local function telescope_root()
+	local git_root = vim.fs.find(".git", { upward = true, type = "directory" })[1]
+	if git_root then
+		return vim.fs.dirname(git_root)
+	end
+
+	return vim.uv.cwd()
+end
+
 vim.keymap.set("n", "<leader>p", function()
 	builtin.find_files({ cwd = telescope_cwd() })
 end, { desc = "Telescope find files (current dir)" })
+vim.keymap.set("n", "<leader>P", function()
+	builtin.find_files({ cwd = telescope_root() })
+end, { desc = "Telescope find files (project root)" })
 vim.keymap.set("n", "<leader>g", function()
 	builtin.live_grep({ cwd = telescope_cwd() })
 end, { desc = "Telescope live grep (current dir)" })
-vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "Telescope buffers" })
+vim.keymap.set("n", "<leader>b", function()
+	builtin.buffers({
+		sort_lastused = true,
+		sort_mru = true,
+	})
+end, { desc = "Telescope buffers (last used first)" })
 vim.keymap.set("n", "<leader>h", builtin.help_tags, { desc = "Telescope help tags" })
 vim.keymap.set("n", "<leader>v", builtin.registers, { desc = "Telescope help tags" })
