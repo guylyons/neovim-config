@@ -16,7 +16,13 @@ vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
 -- FZF lua
 local fzf = require("fzf-lua")
 vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Fzf files" })
-vim.keymap.set("n", "<leader>k", fzf.blines, { desc = "Fzf lines" })
+vim.keymap.set("n", "<leader>k", function()
+	fzf.blines({
+		fzf_opts = {
+			["--exact"] = "",
+		},
+	})
+end, { desc = "Fzf lines (exact match)" })
 
 -- Telescope default keymap
 local builtin = require("telescope.builtin")
