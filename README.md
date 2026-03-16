@@ -16,7 +16,7 @@ This config bootstraps `lazy.nvim` automatically on first launch.
 - Theme: `material-deep-ocean`
 - Plugin manager: `lazy.nvim`
 - Completion: `nvim-cmp` + `vim-vsnip`
-- Fuzzy finding: `fzf-lua` and `telescope.nvim`
+- Fuzzy finding: `fzf-lua`
 - Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
 - Formatting: `conform.nvim`
 - Syntax: `nvim-treesitter`
@@ -90,11 +90,13 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - `<leader>j`: open `:Ex`
 - `<leader>f`: FZF files
 - `<leader>k`: FZF buffer lines
-- `<leader>p`: Telescope find files
-- `<leader>g`: Telescope live grep
-- `<leader>b`: Telescope buffers
-- `<leader>h`: Telescope help
-- `<leader>v`: Telescope registers
+- `<leader>p`: FZF files (current dir)
+- `<leader>P`: FZF files (project root)
+- `<leader>g`: FZF live grep (current dir)
+- `<leader>G`: FZF live grep (project root)
+- `<leader>b`: FZF buffers
+- `<leader>h`: FZF help tags
+- `<leader>v`: FZF registers
 - `<Tab>`: expand Emmet abbreviations in HTML/CSS/template buffers
 
 ## Structure
