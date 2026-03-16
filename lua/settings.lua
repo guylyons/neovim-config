@@ -134,6 +134,33 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	end,
 })
 
+_G.TwigIndent = function()
+	local indent = 0
+	if vim.fn.exists("*HtmlIndent") == 1 then
+		indent = vim.fn["HtmlIndent"]()
+	else
+		local prev = vim.fn.prevnonblank(vim.v.lnum - 1)
+		indent = prev > 0 and vim.fn.indent(prev) or 0
+	end
+
+	local line = vim.fn.getline(vim.v.lnum)
+	if line:match("^%s*{%-?%s*end") or line:match("^%s*{%-?%s*else") or line:match("^%s*{%-?%s*elseif") or line:match("^%s*{%-?%s*elif") then
+		local sw = vim.bo.shiftwidth
+		indent = math.max(indent - sw, 0)
+	end
+
+	return indent
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "twig",
+	callback = function()
+		-- Base Twig indent on HTML rules, with small Twig-aware adjustments.
+		vim.cmd("runtime! indent/html.vim")
+		vim.bo.indentexpr = "v:lua.TwigIndent()"
+	end,
+})
+
 -- Drupal filetype detection
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 	pattern = {
