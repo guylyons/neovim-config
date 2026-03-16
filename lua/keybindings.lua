@@ -12,24 +12,8 @@ vim.keymap.set("n", "<leader>u", ":Lazy update<CR>", { noremap = true, silent = 
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Fzf lines" })
 -- Ex
 vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
+vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
--- FZF lua
-local fzf = require("fzf-lua")
-vim.keymap.set("n", "<leader>ff", fzf.files, { desc = "Fzf files" })
-vim.keymap.set("n", "<leader>fg", function()
-	fzf.live_grep({ cwd = telescope_cwd() })
-end, { desc = "Fzf live grep (current dir)" })
-vim.keymap.set("n", "<leader>fb", fzf.buffers, { desc = "Fzf buffers" })
-vim.keymap.set("n", "<leader>fk", function()
-	fzf.blines({
-		fzf_opts = {
-			["--exact"] = "",
-		},
-	})
-end, { desc = "Fzf lines (exact match)" })
-
--- Telescope default keymap
-local builtin = require("telescope.builtin")
 local function telescope_cwd()
 	if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
 		return vim.b.netrw_curdir
@@ -52,6 +36,23 @@ local function telescope_root()
 	return vim.uv.cwd()
 end
 
+-- FZF lua
+local fzf = require("fzf-lua")
+vim.keymap.set("n", "<leader>ff", fzf.files, { desc = "Fzf files" })
+vim.keymap.set("n", "<leader>fg", function()
+	fzf.live_grep({ cwd = telescope_cwd() })
+end, { desc = "Fzf live grep (current dir)" })
+vim.keymap.set("n", "<leader>fb", fzf.buffers, { desc = "Fzf buffers" })
+vim.keymap.set("n", "<leader>fk", function()
+	fzf.blines({
+		fzf_opts = {
+			["--exact"] = "",
+		},
+	})
+end, { desc = "Fzf lines (exact match)" })
+
+-- Telescope default keymap
+local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>p", function()
 	builtin.find_files({ cwd = telescope_cwd() })
 end, { desc = "Telescope find files (current dir)" })
