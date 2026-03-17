@@ -7,6 +7,7 @@ Personal Neovim config built around `lazy.nvim`, native Neovim 0.11 LSP, and a s
 - Neovim 0.11+
 - Git
 - A working `node` and `npm`
+- `OPENAI_API_KEY` exported in your shell if you want to use `gp.nvim`
 - Optional language servers/formatters installed on your machine
 
 This config bootstraps `lazy.nvim` automatically on first launch.
@@ -18,6 +19,7 @@ This config bootstraps `lazy.nvim` automatically on first launch.
 - Completion: `nvim-cmp` + `vim-vsnip`
 - Fuzzy finding: `fzf-lua`
 - Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
+- AI assistant: `gp.nvim`
 - Formatting: `conform.nvim`
 - Syntax: `nvim-treesitter`
 - Drupal support: `drupal.nvim`
@@ -87,6 +89,10 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - `<leader>O`: open current file directory in Finder
 - `<leader>u`: `:Lazy update`
 - `<leader>m`: open Neogit
+- `<leader>aa`: new `gp.nvim` chat
+- `<leader>at`: toggle `gp.nvim` chat
+- `<leader>ap`: open `gp.nvim` popup
+- `<leader>ar`: rewrite selected text with `gp.nvim`
 - `<leader>j`: open `:Ex`
 - `<leader>f`: FZF files
 - `<leader>k`: FZF buffer lines

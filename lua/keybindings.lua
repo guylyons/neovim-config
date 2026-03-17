@@ -10,6 +10,11 @@ vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = 
 vim.keymap.set("n", "<leader>u", ":Lazy update<CR>", { noremap = true, silent = true })
 -- Neogit
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Fzf lines" })
+-- gp.nvim
+vim.keymap.set("n", "<leader>aa", ":GpChatNew<CR>", { noremap = true, silent = true, desc = "New AI chat" })
+vim.keymap.set("n", "<leader>at", ":GpChatToggle<CR>", { noremap = true, silent = true, desc = "Toggle AI chat" })
+vim.keymap.set("n", "<leader>ap", ":GpPopup<CR>", { noremap = true, silent = true, desc = "AI popup" })
+vim.keymap.set("v", "<leader>ar", ":<C-u>GpRewrite<CR>", { noremap = true, silent = true, desc = "Rewrite selection" })
 -- Ex
 vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
