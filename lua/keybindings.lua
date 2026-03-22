@@ -44,6 +44,7 @@ end
 -- FZF lua
 local fzf = require("fzf-lua")
 vim.keymap.set("n", "<leader>f", fzf.files, { desc = "Fzf files" })
+vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
 vim.keymap.set("n", "<leader>g", function()
   fzf.live_grep({ cwd = get_cwd() })
 end, { desc = "Fzf live grep (current dir)" })
