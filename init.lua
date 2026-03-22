@@ -1,4 +1,6 @@
-vim.loader.enable()
+-- Guy Lyons
+-- Custom NeoVim configuration
+-- 2025
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -26,3 +28,4 @@ require("lazy").setup({
 	notify = { enabled = false },
 })
 require("keybindings")
+require("cmp-config")

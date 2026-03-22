@@ -1,6 +1,6 @@
 # Neovim Config
 
-Personal Neovim config built around `lazy.nvim`, native Neovim 0.11 LSP, and a focused plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
+Personal Neovim config built around `lazy.nvim`, native Neovim 0.11 LSP, and a small plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
 
 ## Requirements
 
@@ -60,12 +60,12 @@ If TypeScript or React stops working, check:
 
 ## Formatters
 
-Configured through `conform.nvim`, with format-on-save enabled and LSP fallback when no external formatter is configured:
+Configured through `conform.nvim`:
 
 - Lua: `stylua`
 - Python: `isort`, `black`
 - Rust: `rustfmt`
-- JavaScript/TypeScript/HTML/CSS/JSON/Markdown/YAML: `prettierd`, fallback `prettier`
+- JavaScript: `prettierd`, fallback `prettier`
 
 ## Tree-sitter Parsers
 
@@ -81,14 +81,13 @@ Installed parsers:
 
 ## Keymaps
 
-Core mappings from [lua/keybindings.lua](lua/keybindings.lua):
+Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua):
 
 - `jj`: leave insert mode
 - `<leader><CR>`: save
 - `<leader>;`: quit all
-- `<leader>O`: open current file directory in the system file manager
+- `<leader>O`: open current file directory in Finder
 - `<leader>u`: `:Lazy update`
-- `<leader>F`: format current buffer
 - `<leader>m`: open Neogit
 - `<leader>aa`: new `gp.nvim` chat
 - `<leader>at`: toggle `gp.nvim` chat
@@ -108,13 +107,14 @@ Core mappings from [lua/keybindings.lua](lua/keybindings.lua):
 
 ## Structure
 
-- [init.lua](init.lua): bootstrap and plugin loading
-- [lua/settings.lua](lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
-- [lua/keybindings.lua](lua/keybindings.lua): custom mappings
-- [lua/plugins](lua/plugins): plugin specs
+- [init.lua](/Users/guy/.config/nvim/init.lua): bootstrap and plugin loading
+- [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
+- [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua): custom mappings
+- [lua/cmp-config.lua](/Users/guy/.config/nvim/lua/cmp-config.lua): completion config
+- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs
 
 ## Notes
 
 - This config uses native `vim.lsp.enable()` instead of older `lspconfig.setup()` patterns.
 - Missing external executables are skipped instead of throwing startup errors.
-- Drupal file patterns like `*.module` and `*.theme` are forced to `php`, while Drupal YAML files such as `*.routing.yml` stay `yaml` in [lua/settings.lua](lua/settings.lua).
+- Drupal file patterns like `*.module`, `*.theme`, and Drupal YAML files are forced to the expected filetypes in [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua).
