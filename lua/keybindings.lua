@@ -16,7 +16,7 @@ vim.keymap.set("n", "<leader>at", ":GpChatToggle<CR>", { noremap = true, silent 
 vim.keymap.set("n", "<leader>ap", ":GpPopup<CR>", { noremap = true, silent = true, desc = "AI popup" })
 vim.keymap.set("v", "<leader>ar", ":<C-u>GpRewrite<CR>", { noremap = true, silent = true, desc = "Rewrite selection" })
 -- Ex
-vim.keymap.set("n", "<leader>j", ":Ex<CR>", { desc = "Opens Ex" })
+vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
 local function get_cwd()
