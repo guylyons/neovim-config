@@ -21,6 +21,18 @@ return {
 			linehl = false, -- Highlight the whole line
 			current_line_blame = false, -- Show blame on the current line
 			preview_config = { border = "rounded" }, -- Border style for previews
+			on_attach = function(bufnr)
+				local gs = package.loaded.gitsigns
+				local map = function(mode, lhs, rhs, desc)
+					vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+				end
+
+				map("n", "]h", gs.next_hunk, "Next hunk")
+				map("n", "[h", gs.prev_hunk, "Previous hunk")
+				map("n", "<leader>hp", gs.preview_hunk, "Preview hunk")
+				map("n", "<leader>hs", gs.stage_hunk, "Stage hunk")
+				map("n", "<leader>hr", gs.reset_hunk, "Reset hunk")
+			end,
 		})
 	end,
 }

@@ -84,7 +84,10 @@ Installed parsers:
 Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua):
 
 - `jj`: leave insert mode
+- `<leader>w`: save
 - `<leader><CR>`: save
+- `<leader>q`: quit current window
+- `<leader>Q`: quit all
 - `<leader>;`: quit all
 - `<leader>O`: open current file directory in Finder
 - `<leader>u`: `:Lazy update`
@@ -93,16 +96,36 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - `<leader>at`: toggle `gp.nvim` chat
 - `<leader>ap`: open `gp.nvim` popup
 - `<leader>ar`: rewrite selected text with `gp.nvim`
+- `<leader>e`: open `:Ex`
 - `<leader>j`: open `:Ex`
-- `<leader>f`: FZF files
+- `<leader>f`: FZF files (project root)
+- `<leader>F`: FZF git files
 - `<leader>k`: FZF buffer lines
 - `<leader>p`: FZF files (current dir)
 - `<leader>P`: FZF files (project root)
+- `<leader>r`: FZF recent files
+- `<leader>.`: resume last FZF picker
 - `<leader>g`: FZF live grep (current dir)
 - `<leader>G`: FZF live grep (project root)
 - `<leader>b`: FZF buffers
+- `<leader>c`: FZF commands
+- `<leader>d`: FZF document diagnostics
+- `<leader>D`: FZF workspace diagnostics
+- `<leader>s`: FZF git status
 - `<leader>h`: FZF help tags
 - `<leader>v`: FZF registers
+- `gd`: FZF definitions
+- `gr`: FZF references
+- `gi`: FZF implementations
+- `gt`: FZF type definitions
+- `K`: hover docs
+- `<leader>rn`: rename symbol
+- `<leader>ca`: code action
+- `[d` / `]d`: previous / next diagnostic
+- `[h` / `]h`: previous / next git hunk
+- `<leader>hp`: preview hunk
+- `<leader>hs`: stage hunk
+- `<leader>hr`: reset hunk
 - `<Tab>`: expand Emmet abbreviations in HTML/CSS/template buffers
 
 ## Structure
