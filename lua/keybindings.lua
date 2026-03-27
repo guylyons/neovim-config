@@ -9,7 +9,7 @@ vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = 
 -- Lazy Update
 vim.keymap.set("n", "<leader>u", ":Lazy update<CR>", { noremap = true, silent = true })
 -- Neogit
-vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Fzf lines" })
+vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
 -- gp.nvim
 vim.keymap.set("n", "<leader>aa", ":GpChatNew<CR>", { noremap = true, silent = true, desc = "New AI chat" })
 vim.keymap.set("n", "<leader>at", ":GpChatToggle<CR>", { noremap = true, silent = true, desc = "Toggle AI chat" })
