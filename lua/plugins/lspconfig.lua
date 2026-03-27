@@ -25,7 +25,7 @@ return {
 		enable_when_available("bashls", "bash-language-server")
 		enable_when_available("phpactor", "phpactor")
 		enable_when_available("emmet_language_server", "emmet-language-server")
-		enable_when_available("yaml_language_server", "yaml-language-server")
+		enable_when_available("yamlls", "yaml-language-server")
 
 		if vim.fn.executable("drupal_ls") == 1 then
 			vim.lsp.config.drupal_ls = {

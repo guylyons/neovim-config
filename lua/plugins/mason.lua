@@ -6,6 +6,7 @@ return {
 		require("mason-lspconfig").setup({
 			ensure_installed = {
 				"phpactor",
+				"yamlls",
 			},
 			automatic_enable = {
 				exclude = { "ts_ls" },

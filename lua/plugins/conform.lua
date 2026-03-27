@@ -7,6 +7,8 @@ return {
         python = { "isort", "black" },
         rust = { "rustfmt" },
         javascript = { "prettierd", "prettier", stop_after_first = true },
+        yaml = { "prettierd", "prettier", stop_after_first = true },
+        yml = { "prettierd", "prettier", stop_after_first = true },
       },
     })
   end,
