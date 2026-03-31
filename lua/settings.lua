@@ -80,6 +80,11 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.opt.wrap = false
 
+if vim.fn.executable("rg") == 1 then
+   vim.opt.grepprg = "rg --vimgrep --smart-case"
+   vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
+end
+
 -- Folds with Tree-sitter
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
