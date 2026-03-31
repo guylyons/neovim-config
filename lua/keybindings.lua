@@ -20,7 +20,7 @@ vim.keymap.set("n", "<leader>ap", ":GpPopup<CR>", { noremap = true, silent = tru
 vim.keymap.set("v", "<leader>ar", ":<C-u>GpRewrite<CR>", { noremap = true, silent = true, desc = "Rewrite selection" })
 -- Ex
 vim.keymap.set("n", "<leader>e", ":Ex ", { desc = "Open Ex and allow entering a path" })
-vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
+vim.keymap.set("n", "<leader>j", ":e ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
 local function get_cwd()
