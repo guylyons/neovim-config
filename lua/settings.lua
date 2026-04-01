@@ -74,6 +74,26 @@ if vim.fn.executable("node") == 0 or vim.fn.executable("npm") == 0 then
    prepend_path(find_nvm_node_bin())
 end
 
+local function prefer_builtin_parser(lang)
+   local runtime = vim.env.VIMRUNTIME
+   if not runtime or runtime == "" then
+      return
+   end
+
+   local nvim_root = vim.fn.fnamemodify(runtime, ":h:h:h")
+   local parser_path = vim.fs.joinpath(nvim_root, "lib", "nvim", "parser", lang .. ".so")
+   if vim.uv.fs_stat(parser_path) then
+      pcall(vim.treesitter.language.add, lang, { path = parser_path })
+   end
+end
+
+prefer_builtin_parser("lua")
+prefer_builtin_parser("markdown")
+prefer_builtin_parser("markdown_inline")
+prefer_builtin_parser("query")
+prefer_builtin_parser("vim")
+prefer_builtin_parser("vimdoc")
+
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 vim.g.mapleader = " "
