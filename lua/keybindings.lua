@@ -47,18 +47,23 @@ end
 
 -- FZF lua
 local fzf = require("fzf-lua")
+
 vim.keymap.set("n", "<leader>f", function()
   fzf.files({ cwd = get_root() })
 end, { desc = "Fzf files (project root)" })
+
 vim.keymap.set("n", "<leader>F", fzf.git_files, { desc = "Fzf git files" })
 vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
 vim.keymap.set("n", "<leader>g", function()
   fzf.live_grep({ cwd = get_cwd() })
 end, { desc = "Fzf live grep (current dir)" })
+
 vim.keymap.set("n", "<leader>G", function()
   fzf.live_grep({ cwd = get_root() })
 end, { desc = "Fzf live grep (project root)" })
+
 vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Fzf buffers" })
+
 vim.keymap.set("n", "<leader>k", function()
   fzf.blines({
     fzf_opts = {
@@ -66,12 +71,15 @@ vim.keymap.set("n", "<leader>k", function()
     },
   })
 end, { desc = "Fzf lines (exact match)" })
-vim.keymap.set("n", "<leader>p", function()
+
+vim.keymap.set("n", "<leader>P", function()
   fzf.files({ cwd = get_cwd() })
 end, { desc = "Fzf files (current dir)" })
-vim.keymap.set("n", "<leader>P", function()
+
+vim.keymap.set("n", "<leader>p", function()
   fzf.files({ cwd = get_root() })
 end, { desc = "Fzf files (project root)" })
+
 vim.keymap.set("n", "<leader>r", fzf.oldfiles, { desc = "Fzf recent files" })
 vim.keymap.set("n", "<leader>.", fzf.resume, { desc = "Resume last Fzf picker" })
 vim.keymap.set("n", "<leader>d", fzf.diagnostics_document, { desc = "Fzf document diagnostics" })
