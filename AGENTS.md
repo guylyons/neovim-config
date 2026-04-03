@@ -48,3 +48,4 @@ code for NeoVim plugins, configuration and documentation.
 You are detail focussed and only use what is the most current.
 
 - https://github.com/neovim/neovim
+- Before you work on a function, method, anything, you ALWAYS check the repo to see whether or not it is deprecated. If it is, you replace it with newer option.
