@@ -1,21 +1,21 @@
 # Neovim Config
 
-Personal Neovim config built around `lazy.nvim`, native Neovim 0.11 LSP, and a small plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
+Personal Neovim config built around Neovim `vim.pack`, native Neovim 0.12 LSP, and a small plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
 
 ## Requirements
 
-- Neovim 0.11+
+- Neovim 0.12+
 - Git
 - A working `node` and `npm`
 - `OPENAI_API_KEY` exported in your shell if you want to use `gp.nvim`
 - Optional language servers/formatters installed on your machine
 
-This config bootstraps `lazy.nvim` automatically on first launch.
+This config uses Neovim's built-in package manager (`vim.pack`) and installs plugins on startup when missing.
 
 ## Highlights
 
 - Theme: `material-deep-ocean`
-- Plugin manager: `lazy.nvim`
+- Plugin manager: `vim.pack`
 - Completion: `nvim-cmp` + `vim-vsnip`
 - Fuzzy finding: `fzf-lua`
 - Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
@@ -90,7 +90,7 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - `<leader>Q`: quit all
 - `<leader>;`: quit all
 - `<leader>O`: open current file directory in Finder
-- `<leader>u`: `:Lazy update`
+- `<leader>u`: `:lua vim.pack.update()`
 - `<leader>m`: open Neogit
 - `<leader>aa`: new `gp.nvim` chat
 - `<leader>at`: toggle `gp.nvim` chat
@@ -131,13 +131,15 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 ## Structure
 
 - [init.lua](/Users/guy/.config/nvim/init.lua): bootstrap and plugin loading
+- [lua/plugin_manager.lua](/Users/guy/.config/nvim/lua/plugin_manager.lua): `vim.pack` plugin registration and setup adapter
 - [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
 - [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua): custom mappings
 - [lua/cmp-config.lua](/Users/guy/.config/nvim/lua/cmp-config.lua): completion config
-- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs
+- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs consumed by `vim.pack`
 
 ## Notes
 
 - This config uses native `vim.lsp.enable()` instead of older `lspconfig.setup()` patterns.
+- `:LspInfo`, `:LspRestart`, and `:LspLog` are provided as compatibility commands on top of Neovim 0.12's `:lsp` command.
 - Missing external executables are skipped instead of throwing startup errors.
 - Drupal file patterns like `*.module`, `*.theme`, and Drupal YAML files are forced to the expected filetypes in [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua).

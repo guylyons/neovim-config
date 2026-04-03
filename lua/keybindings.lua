@@ -9,8 +9,10 @@ vim.keymap.set("n", "<leader>Q", ":qa<CR>", { noremap = true, silent = true, des
 vim.keymap.set("n", "<leader>;", ":qa<CR>", { noremap = true, silent = true })
 -- Open (macOS)
 vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = true })
--- Lazy Update
-vim.keymap.set("n", "<leader>u", ":Lazy update<CR>", { noremap = true, silent = true })
+-- Plugin update
+vim.keymap.set("n", "<leader>u", function()
+  vim.pack.update()
+end, { noremap = true, silent = true, desc = "Update plugins" })
 -- Neogit
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
 -- gp.nvim
