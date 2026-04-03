@@ -11,7 +11,7 @@ vim.keymap.set("n", "<leader>;", ":qa<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = true })
 -- Plugin update
 vim.keymap.set("n", "<leader>u", function()
-  vim.pack.update()
+	vim.pack.update()
 end, { noremap = true, silent = true, desc = "Update plugins" })
 -- Neogit
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
@@ -26,60 +26,60 @@ vim.keymap.set("n", "<leader>j", ":e ", { desc = "Open Ex and allow entering a p
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
 local function get_cwd()
-  if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
-    return vim.b.netrw_curdir
-  end
+	if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
+		return vim.b.netrw_curdir
+	end
 
-  local bufname = vim.api.nvim_buf_get_name(0)
-  if bufname ~= "" then
-    return vim.fn.fnamemodify(bufname, ":h")
-  end
+	local bufname = vim.api.nvim_buf_get_name(0)
+	if bufname ~= "" then
+		return vim.fn.fnamemodify(bufname, ":h")
+	end
 
-  return vim.uv.cwd()
+	return vim.uv.cwd()
 end
 
 local function get_root()
-  local git_root = vim.fs.find(".git", { upward = true, type = "directory" })[1]
-  if git_root then
-    return vim.fs.dirname(git_root)
-  end
+	local git_root = vim.fs.find(".git", { upward = true, type = "directory" })[1]
+	if git_root then
+		return vim.fs.dirname(git_root)
+	end
 
-  return vim.uv.cwd()
+	return vim.uv.cwd()
 end
 
 -- FZF lua
 local fzf = require("fzf-lua")
 
 vim.keymap.set("n", "<leader>f", function()
-  fzf.files({ cwd = get_root() })
+	fzf.files({ cwd = get_root() })
 end, { desc = "Fzf files (project root)" })
 
 vim.keymap.set("n", "<leader>F", fzf.git_files, { desc = "Fzf git files" })
 vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
 vim.keymap.set("n", "<leader>g", function()
-  fzf.live_grep({ cwd = get_cwd() })
+	fzf.live_grep({ cwd = get_cwd() })
 end, { desc = "Fzf live grep (current dir)" })
 
 vim.keymap.set("n", "<leader>G", function()
-  fzf.live_grep({ cwd = get_root() })
+	fzf.live_grep({ cwd = get_root() })
 end, { desc = "Fzf live grep (project root)" })
 
 vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Fzf buffers" })
 
 vim.keymap.set("n", "<leader>k", function()
-  fzf.blines({
-    fzf_opts = {
-      ["--exact"] = "",
-    },
-  })
+	fzf.blines({
+		fzf_opts = {
+			["--exact"] = "",
+		},
+	})
 end, { desc = "Fzf lines (exact match)" })
 
 vim.keymap.set("n", "<leader>P", function()
-  fzf.files({ cwd = get_cwd() })
+	fzf.files({ cwd = get_cwd() })
 end, { desc = "Fzf files (current dir)" })
 
 vim.keymap.set("n", "<leader>p", function()
-  fzf.files({ cwd = get_root() })
+	fzf.files({ cwd = get_root() })
 end, { desc = "Fzf files (project root)" })
 
 vim.keymap.set("n", "<leader>r", fzf.oldfiles, { desc = "Fzf recent files" })
@@ -98,5 +98,8 @@ vim.keymap.set("n", "gt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+vim.keymap.set({ "n", "v" }, "<leader>lf", function()
+	require("conform").format({ async = true, lsp_format = "fallback" })
+end, { desc = "Format buffer" })
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
