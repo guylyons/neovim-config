@@ -98,6 +98,7 @@ prefer_builtin_parser("vimdoc")
 -- loading plugins so that mappings are correct.
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.cmd("filetype plugin indent on")
 vim.opt.wrap = false
 pcall(vim.cmd, "packadd nvim.undotree")
 
