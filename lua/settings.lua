@@ -99,6 +99,7 @@ prefer_builtin_parser("vimdoc")
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.opt.wrap = false
+pcall(vim.cmd, "packadd nvim.undotree")
 
 if vim.fn.executable("rg") == 1 then
    vim.opt.grepprg = "rg --vimgrep --smart-case"

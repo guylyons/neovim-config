@@ -17,6 +17,7 @@ local plugin_modules = {
   "plugins.drupal",
   "plugins.emmet",
   "plugins.gp",
+  "plugins.codex",
   "plugins.lualine",
   "plugins.tiny",
 }
