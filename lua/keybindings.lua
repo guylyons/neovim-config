@@ -21,8 +21,7 @@ vim.keymap.set("n", "<leader>at", ":GpChatToggle<CR>", { noremap = true, silent 
 vim.keymap.set("n", "<leader>ap", ":GpPopup<CR>", { noremap = true, silent = true, desc = "AI popup" })
 vim.keymap.set("v", "<leader>ar", ":<C-u>GpRewrite<CR>", { noremap = true, silent = true, desc = "Rewrite selection" })
 -- Ex
-vim.keymap.set("n", "<leader>e", ":Ex ", { desc = "Open Ex and allow entering a path" })
-vim.keymap.set("n", "<leader>j", ":e ", { desc = "Open Ex and allow entering a path" })
+vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
 local function get_cwd()
@@ -63,6 +62,12 @@ end, { desc = "Fzf live grep (current dir)" })
 vim.keymap.set("n", "<leader>G", function()
 	fzf.live_grep({ cwd = get_root() })
 end, { desc = "Fzf live grep (project root)" })
+
+local function grep_word_under_cursor()
+	fzf.grep_cword({ cwd = get_root() })
+end
+
+vim.keymap.set("n", "<leader>*", grep_word_under_cursor, { desc = "Fzf grep word under cursor (project root)" })
 
 vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Fzf buffers" })
 
