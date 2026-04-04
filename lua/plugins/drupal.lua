@@ -1,5 +1,3 @@
-return {
-	"jdrupal-dev/drupal.nvim",
-	dependencies = { "nvim-lua/plenary.nvim" },
-	ft = { "php", "twig" },
-}
+vim.pack.add({
+  "https://github.com/jdrupal-dev/drupal.nvim",
+})

@@ -1,9 +1,10 @@
-return {
-	"NeogitOrg/neogit",
-	dependencies = {
-		"nvim-lua/plenary.nvim",
-		"sindrets/diffview.nvim",
-		"ibhagwan/fzf-lua",
-	},
-	config = true,
-}
+vim.pack.add({
+  "https://github.com/NeogitOrg/neogit",
+})
+
+local ok, neogit = pcall(require, "neogit")
+if not ok then
+  return
+end
+
+neogit.setup({})

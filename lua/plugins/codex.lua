@@ -1,30 +1,14 @@
-return {
-  "rhart92/codex.nvim",
-  config = function()
-    require("codex").setup({})
-  end,
-  keys = {
-    {
-      "<leader>ct",
-      function()
-        require("codex").toggle()
-      end,
-      desc = "Codex toggle",
-    },
-    {
-      "<leader>cb",
-      function()
-        require("codex").send_buffer()
-      end,
-      desc = "Codex send buffer",
-    },
-    {
-      "<leader>cs",
-      function()
-        require("codex").send_selection()
-      end,
-      mode = "v",
-      desc = "Codex send selection",
-    },
-  },
-}
+vim.pack.add({
+  "https://github.com/rhart92/codex.nvim",
+})
+
+local ok, codex = pcall(require, "codex")
+if not ok then
+  return
+end
+
+codex.setup({})
+
+vim.keymap.set("n", "<leader>ct", codex.toggle, { desc = "Codex toggle" })
+vim.keymap.set("n", "<leader>cb", codex.send_buffer, { desc = "Codex send buffer" })
+vim.keymap.set("v", "<leader>cs", codex.send_selection, { desc = "Codex send selection" })
