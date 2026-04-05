@@ -100,7 +100,6 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 vim.opt.wrap = false
 vim.opt.termguicolors = true
-pcall(vim.cmd, "packadd nvim.undotree")
 
 if vim.fn.executable("rg") == 1 then
 	vim.opt.grepprg = "rg --vimgrep --smart-case"
