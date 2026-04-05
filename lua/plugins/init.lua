@@ -9,8 +9,10 @@ if vim.fn.has("nvim-0.12") == 0 then
 	return
 end
 
+local pack_hooks = vim.api.nvim_create_augroup("nvim-pack-hooks", { clear = true })
+
 vim.api.nvim_create_autocmd("PackChanged", {
-	group = vim.api.nvim_create_augroup("nvim-pack-hooks", { clear = true }),
+	group = pack_hooks,
 	callback = function(ev)
 		local data = ev.data or {}
 		local spec = data.spec or {}
@@ -19,7 +21,11 @@ vim.api.nvim_create_autocmd("PackChanged", {
 			if not data.active then
 				vim.cmd.packadd("nvim-treesitter")
 			end
-			vim.cmd("TSUpdate")
+
+			local ok = pcall(vim.cmd, "TSUpdate")
+			if not ok then
+				notify_error("TSUpdate failed after nvim-treesitter install/update")
+			end
 		end
 	end,
 })
@@ -30,16 +36,23 @@ if vim.fn.exists(":PackUpdate") == 0 then
 	end, { desc = "Update plugins managed by vim.pack" })
 end
 
+local function load_module(module_name)
+	local ok, err = pcall(require, module_name)
+	if not ok then
+		notify_error(("Failed to load %s: %s"):format(module_name, err))
+	end
+	return ok
+end
+
 local plugin_modules = {
-	"plugins.plenary",
 	"plugins.material",
-	"plugins.treesitter",
 	"plugins.lazydev",
+	"plugins.cmp",
 	"plugins.lspconfig",
 	"plugins.mason",
 	"plugins.typescript",
+	"plugins.treesitter",
 	"plugins.conform",
-	"plugins.cmp",
 	"plugins.fzf",
 	"plugins.gitsigns",
 	"plugins.neogit",
@@ -52,8 +65,5 @@ local plugin_modules = {
 }
 
 for _, module_name in ipairs(plugin_modules) do
-	local ok, err = pcall(require, module_name)
-	if not ok then
-		notify_error(string.format("Failed to load %s: %s", module_name, err))
-	end
+	load_module(module_name)
 end
