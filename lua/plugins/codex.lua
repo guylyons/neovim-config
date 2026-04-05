@@ -1,10 +1,6 @@
-vim.pack.add({
-  "https://github.com/rhart92/codex.nvim",
-})
-
 local ok, codex = pcall(require, "codex")
 if not ok then
-  return
+	return
 end
 
 codex.setup({})

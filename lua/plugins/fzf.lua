@@ -1,10 +1,6 @@
-vim.pack.add({
-  "https://github.com/ibhagwan/fzf-lua",
-})
-
 local ok, fzf = pcall(require, "fzf-lua")
 if not ok then
-  return
+	return
 end
 
 fzf.setup({})
