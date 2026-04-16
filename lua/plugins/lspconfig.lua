@@ -15,6 +15,33 @@ local function create_lsp_compat_command(name, callback, desc)
 	end
 end
 
+local function find_workspace_root(bufnr)
+	local bufname = vim.api.nvim_buf_get_name(bufnr)
+	if bufname == "" then
+		return vim.uv.cwd()
+	end
+
+	local start_dir = vim.fs.dirname(bufname)
+	local composer = vim.fs.find("composer.json", { upward = true, path = start_dir })[1]
+	if composer then
+		return vim.fs.dirname(composer)
+	end
+
+	local git_dir = vim.fs.find(".git", { upward = true, path = start_dir, type = "directory" })[1]
+	if git_dir then
+		return vim.fs.dirname(git_dir)
+	end
+
+	return vim.uv.cwd()
+end
+
+local function sanitize_text(value)
+	local text = tostring(value)
+	text = text:gsub("[\r\n]+", " ")
+	text = text:gsub("%s+", " ")
+	return vim.trim(text)
+end
+
 local function format_list(values)
 	if type(values) ~= "table" or vim.tbl_isempty(values) then
 		return "none"
@@ -22,18 +49,33 @@ local function format_list(values)
 
 	local items = {}
 	for _, value in ipairs(values) do
-		items[#items + 1] = tostring(value)
+		items[#items + 1] = sanitize_text(value)
 	end
 
 	return table.concat(items, ", ")
 end
 
 local function format_command(cmd)
-	if type(cmd) == "table" then
-		return table.concat(cmd, " ")
+	if type(cmd) == "function" then
+		return "<function>"
 	end
 
-	return tostring(cmd)
+	if type(cmd) == "table" then
+		local parts = {}
+		local keys = {}
+		for key, value in pairs(cmd) do
+			if type(key) == "number" and value ~= nil then
+				keys[#keys + 1] = key
+			end
+		end
+		table.sort(keys)
+		for _, key in ipairs(keys) do
+			parts[#parts + 1] = sanitize_text(cmd[key])
+		end
+		return table.concat(parts, " ")
+	end
+
+	return sanitize_text(cmd)
 end
 
 local function show_lsp_info()
@@ -43,12 +85,13 @@ local function show_lsp_info()
 	local filetype = vim.bo[bufnr].filetype
 	local clients = vim.lsp.get_clients({ bufnr = bufnr })
 	local configs = vim.lsp.get_configs()
+	local sorted_configs = {}
 	local lines = {
 		"LSP Info",
 		"",
-		("Buffer: %s"):format(filename),
-		("Filetype: %s"):format(filetype ~= "" and filetype or "[none]"),
-		("Working dir: %s"):format(vim.uv.cwd() or "[unknown]"),
+		("Buffer: %s"):format(sanitize_text(filename)),
+		("Filetype: %s"):format(sanitize_text(filetype ~= "" and filetype or "[none]")),
+		("Working dir: %s"):format(sanitize_text(vim.uv.cwd() or "[unknown]")),
 		"",
 		("Attached clients (%d):"):format(#clients),
 	}
@@ -57,23 +100,31 @@ local function show_lsp_info()
 		lines[#lines + 1] = "  - none"
 	else
 		for _, client in ipairs(clients) do
-			lines[#lines + 1] = ("  - %s (id=%d, root=%s)"):format(client.name, client.id, client.root_dir or "[none]")
+			lines[#lines + 1] = ("  - %s (id=%d, root=%s)"):format(
+				sanitize_text(client.name),
+				client.id,
+				sanitize_text(client.root_dir or "[none]")
+			)
 			if client.server_capabilities and client.server_capabilities.documentSymbolProvider then
 				lines[#lines + 1] = "    document symbols: yes"
 			end
 		end
 	end
 
-	local config_names = vim.tbl_keys(configs)
-	table.sort(config_names)
+	for _, config in ipairs(configs) do
+		sorted_configs[#sorted_configs + 1] = config
+	end
+	table.sort(sorted_configs, function(a, b)
+		return sanitize_text(a.name) < sanitize_text(b.name)
+	end)
+
 	lines[#lines + 1] = ""
-	lines[#lines + 1] = ("Configured servers (%d):"):format(#config_names)
-	if #config_names == 0 then
+	lines[#lines + 1] = ("Configured servers (%d):"):format(#sorted_configs)
+	if #sorted_configs == 0 then
 		lines[#lines + 1] = "  - none"
 	else
-		for _, name in ipairs(config_names) do
-			local config = configs[name]
-			lines[#lines + 1] = ("  - %s"):format(name)
+		for _, config in ipairs(sorted_configs) do
+			lines[#lines + 1] = ("  - %s"):format(sanitize_text(config.name or "[unnamed]"))
 			if config.filetypes then
 				lines[#lines + 1] = ("    filetypes: %s"):format(format_list(config.filetypes))
 			end
@@ -84,6 +135,10 @@ local function show_lsp_info()
 				lines[#lines + 1] = ("    root markers: %s"):format(format_list(config.root_markers))
 			end
 		end
+	end
+
+	for i, line in ipairs(lines) do
+		lines[i] = sanitize_text(line)
 	end
 
 	vim.cmd("botright new")
@@ -104,6 +159,8 @@ local function show_lsp_info()
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.workspace = capabilities.workspace or {}
+capabilities.workspace.didChangeWatchedFiles = nil
 local ok_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if ok_cmp then
 	capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
@@ -122,7 +179,7 @@ vim.lsp.config("lua_ls", {
 
 vim.lsp.config("phpactor", {
 	filetypes = { "php" },
-	root_markers = { "composer.json", ".git" },
+	root_dir = find_workspace_root,
 })
 
 vim.lsp.config("yamlls", {

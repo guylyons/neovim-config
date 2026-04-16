@@ -1,8 +1,9 @@
 -- My keybindings
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 -- Save
-vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Save" })
 vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
+-- Window switching
+vim.keymap.set("n", "<leader>w", "<C-w>p", { noremap = true, silent = true, desc = "Toggle previous window" })
 -- Quit
 vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true, desc = "Quit window" })
 vim.keymap.set("n", "<leader>Q", ":qa<CR>", { noremap = true, silent = true, desc = "Quit all" })
@@ -47,6 +48,68 @@ local function get_root()
 
 	return vim.uv.cwd()
 end
+
+local function open_path_if_exists(path)
+	if not path or path == "" or vim.uv.fs_stat(path) == nil then
+		return false
+	end
+
+	vim.cmd.edit(vim.fn.fnameescape(path))
+	return true
+end
+
+local function jump_to_drupal_import_definition()
+	if vim.bo.filetype ~= "php" then
+		return false
+	end
+
+	local line = vim.api.nvim_get_current_line()
+	local namespace = line:match("^%s*use%s+([^;]+);")
+	if not namespace then
+		return false
+	end
+
+	namespace = namespace:gsub("%s+as%s+.+$", "")
+	if not namespace:match("^Drupal\\") then
+		return false
+	end
+
+	local tail = namespace:match("^Drupal\\(.+)$")
+	if not tail or tail == "" then
+		return false
+	end
+
+	local root = get_root()
+	local candidates = {
+		vim.fs.joinpath(root, "docroot", "core", "lib", "Drupal", tail:gsub("\\", "/") .. ".php"),
+	}
+
+	local parts = vim.split(tail, "\\", { plain = true, trimempty = true })
+	if #parts >= 2 then
+		local module = parts[1]
+		local remainder = table.concat(parts, "/", 2)
+		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "core", "modules", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", "custom", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", "contrib", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", module, "src", remainder .. ".php")
+	end
+
+	for _, path in ipairs(candidates) do
+		if open_path_if_exists(path) then
+			return true
+		end
+	end
+
+	return false
+end
+
+vim.keymap.set("n", "gd", function()
+	if jump_to_drupal_import_definition() then
+		return
+	end
+
+	vim.lsp.buf.definition({ reuse_win = true })
+end, { desc = "Go to definition" })
 
 -- FZF lua
 local ok_fzf, fzf = pcall(require, "fzf-lua")
@@ -98,7 +161,6 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>v", fzf.registers, { desc = "Fzf registers" })
 
 	-- LSP picker bindings
-	vim.keymap.set("n", "gd", fzf.lsp_definitions, { desc = "Go to definition" })
 	vim.keymap.set("n", "gr", fzf.lsp_references, { desc = "Go to references" })
 	vim.keymap.set("n", "gi", fzf.lsp_implementations, { desc = "Go to implementations" })
 	vim.keymap.set("n", "gt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
