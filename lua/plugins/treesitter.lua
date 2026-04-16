@@ -30,3 +30,28 @@ vim.api.nvim_create_autocmd("FileType", {
 		pcall(vim.treesitter.start, args.buf)
 	end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("treesitter-indent", { clear = true }),
+	pattern = {
+		"html",
+		"javascript",
+		"javascriptreact",
+		"json",
+		"jsonc",
+		"lua",
+		"markdown",
+		"markdown_inline",
+		"php",
+		"scss",
+		"tsx",
+		"twig",
+		"typescript",
+		"typescriptreact",
+		"yaml",
+	},
+	callback = function(args)
+		vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+		vim.bo[args.buf].smartindent = false
+	end,
+})
