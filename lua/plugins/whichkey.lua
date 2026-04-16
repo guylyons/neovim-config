@@ -4,7 +4,7 @@ if not ok then
 end
 
 which_key.setup({
-	preset = "modern", -- better defaults
+	preset = "modern",
 })
 
 vim.keymap.set("n", "<leader>?", function()

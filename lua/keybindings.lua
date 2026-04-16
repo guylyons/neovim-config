@@ -8,7 +8,14 @@ vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true, desc
 vim.keymap.set("n", "<leader>Q", ":qa<CR>", { noremap = true, silent = true, desc = "Quit all" })
 vim.keymap.set("n", "<leader>;", ":qa<CR>", { noremap = true, silent = true })
 -- Open (macOS)
-vim.keymap.set("n", "<leader>O", ":!open %:p:h<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>O", function()
+	local path = vim.fn.expand("%:p:h")
+	if path == "" then
+		path = vim.uv.cwd() or "."
+	end
+
+	vim.ui.open(path)
+end, { noremap = true, silent = true, desc = "Open containing folder" })
 -- Plugin update
 vim.keymap.set("n", "<leader>u", function()
 	vim.pack.update()
@@ -95,12 +102,15 @@ if ok_fzf then
 	vim.keymap.set("n", "gr", fzf.lsp_references, { desc = "Go to references" })
 	vim.keymap.set("n", "gi", fzf.lsp_implementations, { desc = "Go to implementations" })
 	vim.keymap.set("n", "gt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
+	vim.keymap.set("n", "<leader>ls", fzf.lsp_document_symbols, { desc = "LSP document symbols" })
+	vim.keymap.set("n", "<leader>lS", fzf.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
 end
 
 -- LSP and diagnostics
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+vim.keymap.set("n", "<leader>li", ":LspInfo<CR>", { desc = "LSP info" })
 vim.keymap.set({ "n", "v" }, "<leader>lf", function()
 	require("conform").format({ async = true, lsp_format = "fallback" })
 end, { desc = "Format buffer" })
