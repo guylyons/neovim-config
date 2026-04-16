@@ -1,5 +1,7 @@
 -- My keybindings
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
+vim.cmd("packadd nvim.undotree")
+vim.keymap.set("n", "<leader>t", require("undotree").open)
 -- Save
 vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
 -- Window switching
@@ -88,9 +90,12 @@ local function jump_to_drupal_import_definition()
 	if #parts >= 2 then
 		local module = parts[1]
 		local remainder = table.concat(parts, "/", 2)
-		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "core", "modules", module, "src", remainder .. ".php")
-		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", "custom", module, "src", remainder .. ".php")
-		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", "contrib", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] =
+			vim.fs.joinpath(root, "docroot", "core", "modules", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] =
+			vim.fs.joinpath(root, "docroot", "modules", "custom", module, "src", remainder .. ".php")
+		candidates[#candidates + 1] =
+			vim.fs.joinpath(root, "docroot", "modules", "contrib", module, "src", remainder .. ".php")
 		candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", "modules", module, "src", remainder .. ".php")
 	end
 
