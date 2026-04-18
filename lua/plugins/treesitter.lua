@@ -39,7 +39,6 @@ vim.api.nvim_create_autocmd("FileType", {
 		"javascriptreact",
 		"json",
 		"jsonc",
-		"lua",
 		"markdown",
 		"markdown_inline",
 		"php",
