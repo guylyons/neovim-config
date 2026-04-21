@@ -8,15 +8,6 @@ local php_formatters = { "pint", "php_cs_fixer", "phpcbf", stop_after_first = tr
 
 conform.setup({
 	notify_on_error = false,
-	format_on_save = function(bufnr)
-		if vim.b[bufnr].disable_autoformat then
-			return
-		end
-		return {
-			timeout_ms = 1500,
-			lsp_format = "fallback",
-		}
-	end,
 	formatters_by_ft = {
 		lua = { "stylua" },
 		python = { "isort", "black" },

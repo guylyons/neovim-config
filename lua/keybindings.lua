@@ -25,8 +25,8 @@ vim.keymap.set("n", "<leader>u", function()
 end, { noremap = true, silent = true, desc = "Update plugins" })
 -- Neogit
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
--- Ex
-vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
+-- e
+vim.keymap.set("n", "<leader>j", ":e ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
 
 local function get_cwd()

@@ -11,6 +11,21 @@ end
 
 local pack_hooks = vim.api.nvim_create_augroup("nvim-pack-hooks", { clear = true })
 
+local treesitter_parsers = {
+	"bash",
+	"css",
+	"html",
+	"javascript",
+	"json",
+	"lua",
+	"markdown",
+	"php",
+	"scss",
+	"tsx",
+	"typescript",
+	"yaml",
+}
+
 vim.api.nvim_create_autocmd("PackChanged", {
 	group = pack_hooks,
 	callback = function(ev)
@@ -20,6 +35,13 @@ vim.api.nvim_create_autocmd("PackChanged", {
 		if spec.name == "nvim-treesitter" and (data.kind == "install" or data.kind == "update") then
 			if not data.active then
 				vim.cmd.packadd("nvim-treesitter")
+			end
+
+			local install_ok = pcall(function()
+				require("nvim-treesitter").install(treesitter_parsers, { summary = true }):wait(300000)
+			end)
+			if not install_ok then
+				notify_error("TSInstall failed after nvim-treesitter install/update")
 			end
 
 			local ok = pcall(vim.cmd, "TSUpdate")
