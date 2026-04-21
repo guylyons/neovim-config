@@ -81,7 +81,6 @@ local plugin_modules = {
 	"plugins.whichkey",
 	"plugins.alpha",
 	"plugins.emmet",
-	"plugins.codex",
 	"plugins.lualine",
 	"plugins.tiny",
 }
