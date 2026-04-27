@@ -1,7 +1,14 @@
 -- My keybindings
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
-vim.cmd("packadd nvim.undotree")
-vim.keymap.set("n", "<leader>t", require("undotree").open)
+
+local ok_undotree, undotree = pcall(function()
+	vim.cmd.packadd("nvim.undotree")
+	return require("undotree")
+end)
+
+if ok_undotree then
+	vim.keymap.set("n", "<leader>t", undotree.open, { desc = "Open undo tree" })
+end
 -- Save
 vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
 -- Window switching
@@ -43,12 +50,17 @@ local function get_cwd()
 end
 
 local function get_root()
-	local git_root = vim.fs.find(".git", { upward = true, type = "directory" })[1]
+	local start_path = get_cwd() or vim.uv.cwd()
+	local git_root = vim.fs.find(".git", {
+		path = start_path,
+		upward = true,
+		type = "directory",
+	})[1]
 	if git_root then
 		return vim.fs.dirname(git_root)
 	end
 
-	return vim.uv.cwd()
+	return start_path
 end
 
 local function open_path_if_exists(path)
