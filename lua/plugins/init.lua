@@ -35,6 +35,7 @@ local plugin_modules = {
 	"plugins.mason",
 	"plugins.typescript",
 	"plugins.conform",
+	"plugins.flash",
 	"plugins.fzf",
 	"plugins.gitsigns",
 	"plugins.neogit",

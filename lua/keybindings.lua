@@ -35,6 +35,12 @@ vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
 -- e
 vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "x", "o" }, "<leader>s", function()
+	require("flash").jump()
+end, { desc = "Flash jump" })
+vim.keymap.set({ "n", "x", "o" }, "S", function()
+	require("flash").treesitter()
+end, { desc = "Flash treesitter" })
 
 local function get_cwd()
 	if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
@@ -173,7 +179,7 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>.", fzf.resume, { desc = "Resume last Fzf picker" })
 	vim.keymap.set("n", "<leader>d", fzf.diagnostics_document, { desc = "Fzf document diagnostics" })
 	vim.keymap.set("n", "<leader>D", fzf.diagnostics_workspace, { desc = "Fzf workspace diagnostics" })
-	vim.keymap.set("n", "<leader>s", fzf.git_status, { desc = "Fzf git status" })
+	vim.keymap.set("n", "<leader>gs", fzf.git_status, { desc = "Fzf git status" })
 	vim.keymap.set("n", "<leader>h", fzf.help_tags, { desc = "Fzf help tags" })
 	vim.keymap.set("n", "<leader>v", fzf.registers, { desc = "Fzf registers" })
 
