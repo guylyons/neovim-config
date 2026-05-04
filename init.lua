@@ -25,6 +25,7 @@ vim.pack.add({
 	"https://github.com/NeogitOrg/neogit",
 	"https://github.com/folke/flash.nvim",
 	"https://github.com/nvim-lua/plenary.nvim",
+  "https://github.com/s1n7ax/nvim-window-picker",
 	"https://github.com/rachartier/tiny-inline-diagnostic.nvim",
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	"https://github.com/pmizio/typescript-tools.nvim",

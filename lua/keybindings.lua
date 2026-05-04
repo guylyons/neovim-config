@@ -12,7 +12,13 @@ end
 -- Save
 vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
 -- Window switching
-vim.keymap.set("n", "<leader>w", "<C-w>p", { noremap = true, silent = true, desc = "Toggle previous window" })
+vim.keymap.set("n", "<leader>w", function()
+  local win_id = require("window-picker").pick_window()
+
+  if win_id and vim.api.nvim_win_is_valid(win_id) then
+    vim.api.nvim_set_current_win(win_id)
+  end
+end, { noremap = true, silent = true, desc = "Pick window" })
 -- Quit
 vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true, desc = "Quit window" })
 vim.keymap.set("n", "<leader>Q", ":qa<CR>", { noremap = true, silent = true, desc = "Quit all" })
