@@ -14,7 +14,6 @@ vim.pack.add({
 	"https://github.com/stevearc/conform.nvim",
 	"https://github.com/nvim-tree/nvim-web-devicons",
 	"https://github.com/sindrets/diffview.nvim",
-	"https://github.com/jdrupal-dev/drupal.nvim",
 	"https://github.com/mattn/emmet-vim",
 	"https://github.com/ibhagwan/fzf-lua",
 	"https://github.com/folke/lazydev.nvim",
