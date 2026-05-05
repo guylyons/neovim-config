@@ -12,7 +12,6 @@ require("settings")
 vim.pack.add({
 	"https://github.com/NeogitOrg/neogit",
 	"https://github.com/folke/flash.nvim",
-	"https://github.com/folke/lazydev.nvim",
 	"https://github.com/folke/which-key.nvim",
 	"https://github.com/goolord/alpha-nvim",
 	"https://github.com/ibhagwan/fzf-lua",

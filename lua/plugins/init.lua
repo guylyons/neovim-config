@@ -29,7 +29,6 @@ end
 -- Load plugins
 local plugin_modules = {
 	"plugins.material",
-	"plugins.lazydev",
 	"plugins.lspconfig",
 	"plugins.mason",
 	"plugins.typescript",
