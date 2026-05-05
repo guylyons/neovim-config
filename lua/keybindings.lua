@@ -13,11 +13,11 @@ end
 vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
 -- Window switching
 vim.keymap.set("n", "<leader>w", function()
-  local win_id = require("window-picker").pick_window()
+	local win_id = require("window-picker").pick_window()
 
-  if win_id and vim.api.nvim_win_is_valid(win_id) then
-    vim.api.nvim_set_current_win(win_id)
-  end
+	if win_id and vim.api.nvim_win_is_valid(win_id) then
+		vim.api.nvim_set_current_win(win_id)
+	end
 end, { noremap = true, silent = true, desc = "Pick window" })
 -- Quit
 vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true, desc = "Quit window" })
@@ -149,12 +149,9 @@ if ok_fzf then
 
 	vim.keymap.set("n", "<leader>F", fzf.git_files, { desc = "Fzf git files" })
 	vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
-	vim.keymap.set("n", "<leader>g", function()
-		fzf.live_grep({ cwd = get_cwd() })
-	end, { desc = "Fzf live grep (current dir)" })
 
-	vim.keymap.set("n", "<leader>G", function()
-		fzf.live_grep({ cwd = get_root() })
+	vim.keymap.set("n", "<leader>g", function()
+		fzf.live_grep_native({ cwd = get_root() })
 	end, { desc = "Fzf live grep (project root)" })
 
 	local function grep_word_under_cursor()
@@ -185,7 +182,7 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>.", fzf.resume, { desc = "Resume last Fzf picker" })
 	vim.keymap.set("n", "<leader>d", fzf.diagnostics_document, { desc = "Fzf document diagnostics" })
 	vim.keymap.set("n", "<leader>D", fzf.diagnostics_workspace, { desc = "Fzf workspace diagnostics" })
-	vim.keymap.set("n", "<leader>gs", fzf.git_status, { desc = "Fzf git status" })
+	vim.keymap.set("n", "<leader>S", fzf.git_status, { desc = "Fzf git status" })
 	vim.keymap.set("n", "<leader>h", fzf.help_tags, { desc = "Fzf help tags" })
 	vim.keymap.set("n", "<leader>v", fzf.registers, { desc = "Fzf registers" })
 
@@ -200,7 +197,7 @@ end
 -- LSP and diagnostics
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
-vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
+vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
 vim.keymap.set("n", "<leader>li", ":LspInfo<CR>", { desc = "LSP info" })
 vim.keymap.set({ "n", "v" }, "<leader>lf", function()
 	require("conform").format({ async = true, lsp_format = "fallback" })
