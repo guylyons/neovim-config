@@ -18,7 +18,6 @@ vim.pack.add({
 	"https://github.com/marko-cerovac/material.nvim",
 	"https://github.com/mattn/emmet-vim",
 	"https://github.com/neovim/nvim-lspconfig",
-	"https://github.com/nvim-lua/plenary.nvim",
 	"https://github.com/nvim-tree/nvim-web-devicons",
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 	"https://github.com/pmizio/typescript-tools.nvim",
