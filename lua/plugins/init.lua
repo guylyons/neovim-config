@@ -33,7 +33,6 @@ local plugin_modules = {
 	"plugins.lspconfig",
 	"plugins.mason",
 	"plugins.typescript",
-	"plugins.conform",
 	"plugins.flash",
 	"plugins.fzf",
 	"plugins.gitsigns",
@@ -41,8 +40,6 @@ local plugin_modules = {
 	"plugins.whichkey",
 	"plugins.alpha",
 	"plugins.emmet",
-	"plugins.lualine",
-	"plugins.tiny",
 	"plugins.nvim-window-picker",
 }
 
