@@ -161,10 +161,6 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.workspace = capabilities.workspace or {}
 capabilities.workspace.didChangeWatchedFiles = nil
-local ok_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-if ok_cmp then
-	capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-end
 vim.lsp.config("*", { capabilities = capabilities })
 
 vim.lsp.config("lua_ls", {

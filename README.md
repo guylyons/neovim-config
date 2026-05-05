@@ -16,7 +16,7 @@ This config uses Neovim's built-in package manager (`vim.pack`) and installs plu
 
 - Theme: `material-deep-ocean`
 - Plugin manager: `vim.pack`
-- Completion: `nvim-cmp` + `vim-vsnip`
+- Completion: native Neovim insert/LSP completion
 - Fuzzy finding: `fzf-lua`
 - Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
 - AI assistant: `gp.nvim`
@@ -84,6 +84,7 @@ Installed parsers:
 Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua):
 
 - `jj`: leave insert mode
+- `<C-Space>` / `<C-@>`: trigger native completion
 - `<leader>w`: save
 - `<leader><CR>`: save
 - `<leader>q`: quit current window
@@ -134,7 +135,7 @@ Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings
 - [lua/plugin_manager.lua](/Users/guy/.config/nvim/lua/plugin_manager.lua): `vim.pack` plugin registration and setup adapter
 - [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
 - [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua): custom mappings
-- [lua/cmp-config.lua](/Users/guy/.config/nvim/lua/cmp-config.lua): completion config
+- [lua/plugins/completion.lua](/Users/guy/.config/nvim/lua/plugins/completion.lua): native completion config
 - [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs consumed by `vim.pack`
 
 ## Notes

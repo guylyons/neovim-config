@@ -30,6 +30,7 @@ end
 local plugin_modules = {
 	"plugins.material",
 	"plugins.lazydev",
+	"plugins.completion",
 	"plugins.lspconfig",
 	"plugins.mason",
 	"plugins.typescript",
@@ -43,7 +44,7 @@ local plugin_modules = {
 	"plugins.emmet",
 	"plugins.lualine",
 	"plugins.tiny",
-  "plugins.nvim-window-picker",
+	"plugins.nvim-window-picker",
 }
 
 for _, module_name in ipairs(plugin_modules) do

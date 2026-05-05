@@ -7,7 +7,7 @@ This repository is a personal Neovim configuration for Neovim 0.12+.
 - `lua/settings.lua`: core editor options, filetype autocommands, environment/PATH bootstrap.
 - `lua/plugin_manager.lua`: plugin registration and loading through native `vim.pack`.
 - `lua/plugins/*.lua`: one file per plugin or feature area (`treesitter`, `lspconfig`, `conform`, etc.).
-- `lua/keybindings.lua`, `lua/cmp-config.lua`: keymaps and completion behavior.
+- `lua/keybindings.lua`, `lua/plugins/completion.lua`: keymaps and completion behavior.
 
 There is no dedicated `tests/` directory in this repo.
 
