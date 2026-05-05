@@ -188,19 +188,12 @@ vim.lsp.config("yamlls", {
 
 vim.lsp.config("emmet_language_server", {
 	filetypes = {
-		"astro",
 		"css",
 		"eruby",
 		"html",
-		"javascriptreact",
 		"less",
-		"php",
 		"sass",
 		"scss",
-		"svelte",
-		"twig",
-		"typescriptreact",
-		"vue",
 	},
 })
 

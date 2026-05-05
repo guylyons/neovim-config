@@ -2,17 +2,8 @@ vim.g.user_emmet_install_global = 0
 vim.g.user_emmet_mode = "inv"
 vim.g.user_emmet_expandabbr_key = "<Tab>"
 vim.g.user_emmet_settings = {
-	php = {
-		extends = "html",
-	},
 	twig = {
 		extends = "html",
-	},
-	javascriptreact = {
-		extends = "jsx",
-	},
-	typescriptreact = {
-		extends = "jsx",
 	},
 }
 

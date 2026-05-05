@@ -18,7 +18,7 @@ vim.opt.foldminlines = 6
 vim.opt.foldnestmax = 3
 vim.opt.foldcolumn = "0"
 
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 vim.opt.number = true
 vim.opt.signcolumn = "yes"
 
@@ -29,8 +29,10 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
-vim.opt.smartindent = true
+vim.opt.softtabstop = 2
 vim.opt.autoindent = true
+vim.opt.smartindent = false
+vim.opt.cindent = false
 
 -- Search highlight fix
 -- Turns off keyword highlighting after cursor movement.
