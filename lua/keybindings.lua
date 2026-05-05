@@ -159,9 +159,7 @@ if ok_fzf then
 	end
 
 	vim.keymap.set("n", "<leader>*", grep_word_under_cursor, { desc = "Fzf grep word under cursor (project root)" })
-
 	vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Fzf buffers" })
-
 	vim.keymap.set("n", "<leader>k", function()
 		fzf.blines({
 			fzf_opts = {
