@@ -30,7 +30,6 @@ end
 local plugin_modules = {
 	"plugins.material",
 	"plugins.lazydev",
-	"plugins.cmp",
 	"plugins.lspconfig",
 	"plugins.mason",
 	"plugins.typescript",
