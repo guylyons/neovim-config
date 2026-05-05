@@ -1,6 +1,6 @@
 local ok, flash = pcall(require, "flash")
 if not ok then
-	return
+  return
 end
 
 flash.setup({})
