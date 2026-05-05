@@ -1,29 +1,52 @@
 local ok, fzf = pcall(require, "fzf-lua")
 if not ok then
-  return
+	return
 end
 
 fzf.setup({
-  fzf_opts = {
-    ["--ansi"] = true,
-  },
+	"max-perf",
 
-  grep = {
-    rg_opts = table.concat({
-      "--column",
-      "--line-number",
-      "--no-heading",
-      "--color=always",
-      "--smart-case",
-      "--hidden",
-      "--glob '!**/.git/**'",
-    }, " "),
-  },
+	grep = {
+		previewer = false,
+		file_icons = false,
+		git_icons = false,
+		color_icons = false,
+		rg_glob = false,
+		rg_opts = table.concat({
+			"--hidden",
+			"--column",
+			"--line-number",
+			"--no-heading",
+			"--color=never",
+			"--smart-case",
+			"--max-columns=4096",
+			"-g",
+			"'!.git'",
+			"-g",
+			"'!.jj'",
+			"-g",
+			"'!node_modules'",
+			"-g",
+			"'!vendor'",
+			"-g",
+			"'!var/cache'",
+			"-g",
+			"'!web/sites/*/files'",
+			"-g",
+			"'!docroot/sites/*/files'",
+			"-e",
+		}, " "),
+	},
 
-  previewers = {
-    bat = {
-      cmd = "bat",
-      args = "--style=numbers,changes --color=always",
-    },
-  },
+	winopts = {
+		preview = {
+			hidden = true,
+		},
+	},
+
+	fzf_opts = {
+		["--ansi"] = false,
+		["--layout"] = "reverse",
+		["--info"] = "inline",
+	},
 })
