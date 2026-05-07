@@ -11,13 +11,11 @@ mason_lspconfig.setup({
 		"cssls",
 		"emmet_language_server",
 		"html",
+		"intelephense",
 		"jsonls",
 		"lua_ls",
-		"phpactor",
 		"pyright",
 		"yamlls",
 	},
-	automatic_enable = {
-		exclude = { "ts_ls" },
-	},
+	automatic_enable = false,
 })

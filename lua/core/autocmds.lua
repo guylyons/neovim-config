@@ -1,41 +1,3 @@
--- Make sure to setup `mapleader` and `maplocalleader` before
--- loading plugins so that mappings are correct.
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
-vim.opt.wrap = false
-vim.opt.termguicolors = true
-
-if vim.fn.executable("rg") == 1 then
-	vim.opt.grepprg = "rg --vimgrep --smart-case"
-	vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
-end
-
--- Fold code by default, preferring Tree-sitter and falling back to indent rules.
-vim.opt.foldenable = true
-vim.opt.foldlevel = 1
-vim.opt.foldlevelstart = 1
-vim.opt.foldminlines = 6
-vim.opt.foldnestmax = 3
-vim.opt.foldcolumn = "0"
-
-vim.opt.relativenumber = true
-vim.opt.number = true
-vim.opt.signcolumn = "yes"
-
--- Clipboard
-vim.opt.clipboard = "unnamedplus"
-
--- General indentation settings
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.autoindent = true
-vim.opt.smartindent = true
-vim.opt.cindent = false
-
--- Search highlight fix
--- Turns off keyword highlighting after cursor movement.
 vim.api.nvim_create_autocmd("CursorMoved", {
 	group = vim.api.nvim_create_augroup("auto-hlsearch", { clear = true }),
 	callback = function()
@@ -47,7 +9,6 @@ vim.api.nvim_create_autocmd("CursorMoved", {
 	end,
 })
 
--- Automatically return to the last editing position when reopening a file
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = vim.api.nvim_create_augroup("resume-last-edit-position", { clear = true }),
 	callback = function()
@@ -86,4 +47,3 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 		configure_code_folding(args.buf)
 	end,
 })
-

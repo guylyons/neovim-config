@@ -1,11 +1,16 @@
+local function executable(command)
+	return vim.fn.executable(command) == 1
+end
+
 local function enable_when_available(server_name, commands)
 	local command_list = type(commands) == "table" and commands or { commands }
 	for _, command in ipairs(command_list) do
-		if vim.fn.executable(command) == 1 then
+		if executable(command) then
 			vim.lsp.enable(server_name)
 			return true
 		end
 	end
+
 	return false
 end
 
@@ -15,24 +20,19 @@ local function create_lsp_compat_command(name, callback, desc)
 	end
 end
 
-local function find_workspace_root(bufnr)
+local function root_from_markers(bufnr, markers)
 	local bufname = vim.api.nvim_buf_get_name(bufnr)
-	if bufname == "" then
-		return vim.uv.cwd()
+	local start = bufname ~= "" and vim.fs.dirname(bufname) or vim.uv.cwd()
+	if not start then
+		return nil
 	end
 
-	local start_dir = vim.fs.dirname(bufname)
-	local composer = vim.fs.find("composer.json", { upward = true, path = start_dir })[1]
-	if composer then
-		return vim.fs.dirname(composer)
-	end
+	local marker = vim.fs.find(markers, {
+		path = start,
+		upward = true,
+	})[1]
 
-	local git_dir = vim.fs.find(".git", { upward = true, path = start_dir, type = "directory" })[1]
-	if git_dir then
-		return vim.fs.dirname(git_dir)
-	end
-
-	return vim.uv.cwd()
+	return marker and vim.fs.dirname(marker) or start
 end
 
 local function sanitize_text(value)
@@ -62,15 +62,8 @@ local function format_command(cmd)
 
 	if type(cmd) == "table" then
 		local parts = {}
-		local keys = {}
-		for key, value in pairs(cmd) do
-			if type(key) == "number" and value ~= nil then
-				keys[#keys + 1] = key
-			end
-		end
-		table.sort(keys)
-		for _, key in ipairs(keys) do
-			parts[#parts + 1] = sanitize_text(cmd[key])
+		for _, value in ipairs(cmd) do
+			parts[#parts + 1] = sanitize_text(value)
 		end
 		return table.concat(parts, " ")
 	end
@@ -105,9 +98,6 @@ local function show_lsp_info()
 				client.id,
 				sanitize_text(client.root_dir or "[none]")
 			)
-			if client.server_capabilities and client.server_capabilities.documentSymbolProvider then
-				lines[#lines + 1] = "    document symbols: yes"
-			end
 		end
 	end
 
@@ -120,25 +110,14 @@ local function show_lsp_info()
 
 	lines[#lines + 1] = ""
 	lines[#lines + 1] = ("Configured servers (%d):"):format(#sorted_configs)
-	if #sorted_configs == 0 then
-		lines[#lines + 1] = "  - none"
-	else
-		for _, config in ipairs(sorted_configs) do
-			lines[#lines + 1] = ("  - %s"):format(sanitize_text(config.name or "[unnamed]"))
-			if config.filetypes then
-				lines[#lines + 1] = ("    filetypes: %s"):format(format_list(config.filetypes))
-			end
-			if config.cmd then
-				lines[#lines + 1] = ("    cmd: %s"):format(format_command(config.cmd))
-			end
-			if config.root_markers then
-				lines[#lines + 1] = ("    root markers: %s"):format(format_list(config.root_markers))
-			end
+	for _, config in ipairs(sorted_configs) do
+		lines[#lines + 1] = ("  - %s"):format(sanitize_text(config.name or "[unnamed]"))
+		if config.filetypes then
+			lines[#lines + 1] = ("    filetypes: %s"):format(format_list(config.filetypes))
 		end
-	end
-
-	for i, line in ipairs(lines) do
-		lines[i] = sanitize_text(line)
+		if config.cmd then
+			lines[#lines + 1] = ("    cmd: %s"):format(format_command(config.cmd))
+		end
 	end
 
 	vim.cmd("botright new")
@@ -159,9 +138,24 @@ local function show_lsp_info()
 end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
+local ok_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+if ok_cmp_lsp then
+	capabilities = cmp_lsp.default_capabilities(capabilities)
+end
+
 capabilities.workspace = capabilities.workspace or {}
 capabilities.workspace.didChangeWatchedFiles = nil
-vim.lsp.config("*", { capabilities = capabilities })
+
+vim.lsp.config("*", {
+	capabilities = capabilities,
+})
+
+vim.lsp.config("intelephense", {
+	filetypes = { "php" },
+	root_dir = function(bufnr)
+		return root_from_markers(bufnr, { "composer.json", ".git" })
+	end,
+})
 
 vim.lsp.config("lua_ls", {
 	settings = {
@@ -171,11 +165,6 @@ vim.lsp.config("lua_ls", {
 			telemetry = { enable = false },
 		},
 	},
-})
-
-vim.lsp.config("phpactor", {
-	filetypes = { "php" },
-	root_dir = find_workspace_root,
 })
 
 vim.lsp.config("yamlls", {
@@ -197,7 +186,7 @@ vim.lsp.config("emmet_language_server", {
 	},
 })
 
-if vim.fn.executable("drupal_ls") == 1 then
+if executable("drupal_ls") then
 	vim.lsp.config("drupal_ls", {
 		cmd = { "drupal_ls" },
 		filetypes = { "php", "twig", "yaml" },
@@ -206,10 +195,10 @@ if vim.fn.executable("drupal_ls") == 1 then
 	vim.lsp.enable("drupal_ls")
 end
 
+enable_when_available("intelephense", "intelephense")
 enable_when_available("lua_ls", { "lua-language-server", "lua_ls" })
 enable_when_available("pyright", "pyright-langserver")
 enable_when_available("bashls", "bash-language-server")
-enable_when_available("phpactor", "phpactor")
 enable_when_available("emmet_language_server", "emmet-language-server")
 enable_when_available("yamlls", "yaml-language-server")
 
@@ -223,15 +212,3 @@ create_lsp_compat_command("LspLog", function()
 	local log_path = vim.fs.joinpath(vim.fn.stdpath("state"), "lsp.log")
 	vim.cmd("edit " .. vim.fn.fnameescape(log_path))
 end, "Show LSP log")
-
-vim.diagnostic.config({
-	severity_sort = true,
-	update_in_insert = false,
-	virtual_text = {
-		source = "if_many",
-	},
-	float = {
-		border = "rounded",
-		source = "if_many",
-	},
-})

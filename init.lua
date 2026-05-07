@@ -6,6 +6,8 @@ if vim.loader and vim.loader.enable then
 	vim.loader.enable()
 end
 
-require("settings")
+require("core.options")
+require("core.autocmds")
+require("core.diagnostics")
 require("plugins")
-require("keybindings")
+require("core.keymaps")

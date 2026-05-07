@@ -1,4 +1,3 @@
--- My keybindings
 vim.keymap.set("i", "jj", "<Esc>", { noremap = true, silent = true })
 
 local ok_undotree, undotree = pcall(function()
@@ -9,9 +8,9 @@ end)
 if ok_undotree then
 	vim.keymap.set("n", "<leader>t", undotree.open, { desc = "Open undo tree" })
 end
--- Save
-vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true })
--- Window switching
+
+vim.keymap.set("n", "<leader><CR>", ":w<CR>", { noremap = true, silent = true, desc = "Write buffer" })
+
 vim.keymap.set("n", "<leader>w", function()
 	local win_id = require("window-picker").pick_window()
 
@@ -19,11 +18,11 @@ vim.keymap.set("n", "<leader>w", function()
 		vim.api.nvim_set_current_win(win_id)
 	end
 end, { noremap = true, silent = true, desc = "Pick window" })
--- Quit
+
 vim.keymap.set("n", "<leader>q", ":q<CR>", { noremap = true, silent = true, desc = "Quit window" })
 vim.keymap.set("n", "<leader>Q", ":qa<CR>", { noremap = true, silent = true, desc = "Quit all" })
 vim.keymap.set("n", "<leader>;", ":qa<CR>", { noremap = true, silent = true })
--- Open (macOS)
+
 vim.keymap.set("n", "<leader>O", function()
 	local path = vim.fn.expand("%:p:h")
 	if path == "" then
@@ -32,18 +31,19 @@ vim.keymap.set("n", "<leader>O", function()
 
 	vim.ui.open(path)
 end, { noremap = true, silent = true, desc = "Open containing folder" })
--- Plugin update
+
 vim.keymap.set("n", "<leader>u", function()
 	vim.pack.update()
 end, { noremap = true, silent = true, desc = "Update plugins" })
--- Neogit
+
 vim.keymap.set("n", "<leader>m", ":Neogit<CR>", { desc = "Neogit status" })
--- e
 vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { noremap = true, silent = true })
+
 vim.keymap.set({ "n", "x", "o" }, "<leader>s", function()
 	require("flash").jump()
 end, { desc = "Flash jump" })
+
 vim.keymap.set({ "n", "x", "o" }, "S", function()
 	require("flash").treesitter()
 end, { desc = "Flash treesitter" })
@@ -140,7 +140,6 @@ vim.keymap.set("n", "gd", function()
 	vim.lsp.buf.definition({ reuse_win = true })
 end, { desc = "Go to definition" })
 
--- FZF lua
 local ok_fzf, fzf = pcall(require, "fzf-lua")
 if ok_fzf then
 	vim.keymap.set("n", "<leader>f", function()
@@ -154,11 +153,10 @@ if ok_fzf then
 		fzf.live_grep_native({ cwd = get_root() })
 	end, { desc = "Fzf live grep (project root)" })
 
-	local function grep_word_under_cursor()
+	vim.keymap.set("n", "<leader>*", function()
 		fzf.grep_cword({ cwd = get_root() })
-	end
+	end, { desc = "Fzf grep word under cursor (project root)" })
 
-	vim.keymap.set("n", "<leader>*", grep_word_under_cursor, { desc = "Fzf grep word under cursor (project root)" })
 	vim.keymap.set("n", "<leader>b", fzf.buffers, { desc = "Fzf buffers" })
 	vim.keymap.set("n", "<leader>k", function()
 		fzf.blines({
@@ -183,8 +181,6 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>S", fzf.git_status, { desc = "Fzf git status" })
 	vim.keymap.set("n", "<leader>h", fzf.help_tags, { desc = "Fzf help tags" })
 	vim.keymap.set("n", "<leader>v", fzf.registers, { desc = "Fzf registers" })
-
-	-- LSP picker bindings
 	vim.keymap.set("n", "gr", fzf.lsp_references, { desc = "Go to references" })
 	vim.keymap.set("n", "gi", fzf.lsp_implementations, { desc = "Go to implementations" })
 	vim.keymap.set("n", "gt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
@@ -192,11 +188,7 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>lS", fzf.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
 end
 
--- LSP and diagnostics
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
 vim.keymap.set("n", "<leader>li", ":LspInfo<CR>", { desc = "LSP info" })
-vim.keymap.set({ "n", "v" }, "<leader>lf", function()
-	require("conform").format({ async = true, lsp_format = "fallback" })
-end, { desc = "Format buffer" })
