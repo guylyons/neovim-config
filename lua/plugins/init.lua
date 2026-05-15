@@ -19,6 +19,7 @@ vim.pack.add({
 	"https://github.com/sindrets/diffview.nvim",
 	"https://github.com/williamboman/mason-lspconfig.nvim",
 	"https://github.com/williamboman/mason.nvim",
+	"https://github.com/rachartier/tiny-inline-diagnostic.nvim",
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 })
 
@@ -61,6 +62,7 @@ local plugin_modules = {
 	"plugins.php",
 	"plugins.typescript",
 	"plugins.whichkey",
+	"plugins.tiny",
 }
 
 for _, module_name in ipairs(plugin_modules) do
