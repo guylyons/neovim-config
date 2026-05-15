@@ -20,21 +20,6 @@ local function create_lsp_compat_command(name, callback, desc)
 	end
 end
 
-local function root_from_markers(bufnr, markers)
-	local bufname = vim.api.nvim_buf_get_name(bufnr)
-	local start = bufname ~= "" and vim.fs.dirname(bufname) or vim.uv.cwd()
-	if not start then
-		return nil
-	end
-
-	local marker = vim.fs.find(markers, {
-		path = start,
-		upward = true,
-	})[1]
-
-	return marker and vim.fs.dirname(marker) or start
-end
-
 local function sanitize_text(value)
 	local text = tostring(value)
 	text = text:gsub("[\r\n]+", " ")
@@ -152,9 +137,7 @@ vim.lsp.config("*", {
 
 vim.lsp.config("intelephense", {
 	filetypes = { "php" },
-	root_dir = function(bufnr)
-		return root_from_markers(bufnr, { "composer.json", ".git" })
-	end,
+	root_markers = { "composer.json", ".git" },
 })
 
 vim.lsp.config("lua_ls", {
@@ -203,7 +186,9 @@ enable_when_available("bashls", "bash-language-server")
 enable_when_available("emmet_language_server", "emmet-language-server")
 enable_when_available("yamlls", "yaml-language-server")
 
-create_lsp_compat_command("LspInfo", show_lsp_info, "Show LSP info")
+create_lsp_compat_command("LspInfo", function()
+	vim.cmd("checkhealth vim.lsp")
+end, "Show LSP health")
 
 create_lsp_compat_command("LspRestart", function()
 	vim.cmd("lsp restart")

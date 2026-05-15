@@ -1,143 +1,119 @@
 # Neovim Config
 
-Personal Neovim config built around Neovim `vim.pack`, native Neovim 0.12 LSP, and a small plugin set for PHP/Drupal, JavaScript/TypeScript, and general editing.
+Personal Neovim config for Neovim 0.12+, built around `vim.pack`, native LSP configuration, Tree-sitter, and a compact plugin set for PHP/Drupal, JavaScript/TypeScript, Twig, YAML, and general editing.
 
 ## Requirements
 
 - Neovim 0.12+
 - Git
-- A working `node` and `npm`
-- `OPENAI_API_KEY` exported in your shell if you want to use `gp.nvim`
-- Optional language servers/formatters installed on your machine
-
-This config uses Neovim's built-in package manager (`vim.pack`) and installs plugins on startup when missing.
+- `rg` for fast grep integration
+- `node` and `npm` for JavaScript/TypeScript, Emmet, YAML, and several language servers
+- Optional language servers installed locally or through Mason
 
 ## Highlights
 
-- Theme: `material-deep-ocean`
-- Plugin manager: `vim.pack`
+- Plugin manager: native `vim.pack`
+- LSP: native `vim.lsp.config()` and `vim.lsp.enable()`
+- Syntax and folds: `nvim-treesitter` on the `main` branch
+- Completion: `nvim-cmp` with LuaSnip, LSP, path, and buffer sources
 - Fuzzy finding: `fzf-lua`
-- Git UI: `neogit` + `diffview.nvim` + `gitsigns.nvim`
-- AI assistant: `gp.nvim`
-- Formatting: `conform.nvim`
-- Syntax: `nvim-treesitter`
-- Drupal support: `drupal.nvim`
-- TypeScript LSP: `typescript-tools.nvim`
+- Git UI: `neogit`, `diffview.nvim`, and `gitsigns.nvim`
+- Theme: `material-deep-ocean`
+- Navigation helpers: `flash.nvim`, `which-key.nvim`, and `nvim-window-picker`
 
 ## Language Support
 
-### Enabled when installed
+LSP servers are enabled only when their executable is available on `PATH`.
 
-The config only enables LSP servers if their executables are available in `PATH`.
-
-- Lua: `lua-language-server`
+- Lua: `lua-language-server` or `lua_ls`
+- PHP: `intelephense`
+- Drupal: `drupal_ls`
 - Python: `pyright-langserver`
 - Bash: `bash-language-server`
-- PHP: `phpactor`
-- Emmet LSP: `emmet-language-server`
 - YAML: `yaml-language-server`
-- Drupal: `drupal_ls`
+- Emmet: `emmet-language-server`
+- TypeScript/JavaScript: `typescript-tools.nvim`
 
-### TypeScript and React
+TypeScript support intentionally uses `pmizio/typescript-tools.nvim` rather than `ts_ls`. Mason is configured with `automatic_enable = false`, so native LSP enablement remains explicit in [lua/plugins/lsp.lua](/Users/guy/.config/nvim/lua/plugins/lsp.lua).
 
-Inline Emmet abbreviation expansion comes from `mattn/emmet-vim`; in HTML-like buffers, typing an abbreviation such as `div.card` and pressing `<Tab>` expands it.
+## Formatting
 
-TypeScript support uses `pmizio/typescript-tools.nvim`, not `ts_ls`.
+Formatting is intentionally manual to avoid noisy save-time diffs.
 
-Important details:
+- `:Format`: format the current buffer through an attached LSP client
+- `<leader>lf`: format from normal or visual mode
 
-- `mason-lspconfig` is configured to exclude `ts_ls` auto-enable to avoid conflicts.
-- Neovim prepends Homebrew and the default NVM Node bin path at startup if `node`/`npm` are missing.
-- `tsx` is included in Tree-sitter, so `.tsx` highlighting works.
+## Tree-sitter
 
-If TypeScript or React stops working, check:
+Parsers are installed through the current `nvim-treesitter` `main` API in [lua/plugins/treesitter.lua](/Users/guy/.config/nvim/lua/plugins/treesitter.lua).
 
-1. `:checkhealth`
-2. `:echo exepath('node')`
-3. `:echo exepath('npm')`
-4. `:LspInfo`
+Installed parsers include:
 
-## Formatters
-
-Configured through `conform.nvim`:
-
-- Lua: `stylua`
-- Python: `isort`, `black`
-- Rust: `rustfmt`
-- JavaScript: `prettierd`, fallback `prettier`
-
-## Tree-sitter Parsers
-
-Installed parsers:
-
-- `lua`
+- `bash`
+- `css`
+- `html`
 - `javascript`
-- `typescript`
-- `tsx`
-- `twig`
+- `json`
+- `lua`
 - `php`
+- `phpdoc`
+- `python`
+- `query`
+- `twig`
+- `typescript`
+- `vim`
+- `vimdoc`
 - `yaml`
+
+Folds are enabled through native `vim.treesitter.foldexpr()` in [lua/core/autocmds.lua](/Users/guy/.config/nvim/lua/core/autocmds.lua), with an indent fallback when Tree-sitter cannot start.
 
 ## Keymaps
 
-Core mappings from [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua):
+Core mappings live in [lua/core/keymaps.lua](/Users/guy/.config/nvim/lua/core/keymaps.lua).
 
 - `jj`: leave insert mode
-- `<leader>w`: save
-- `<leader><CR>`: save
+- `<leader><CR>`: write buffer
 - `<leader>q`: quit current window
-- `<leader>Q`: quit all
-- `<leader>;`: quit all
-- `<leader>O`: open current file directory in Finder
-- `<leader>u`: `:lua vim.pack.update()`
+- `<leader>Q` / `<leader>;`: quit all
+- `<leader>O`: open containing folder
+- `<leader>u`: run `vim.pack.update()`
 - `<leader>m`: open Neogit
-- `<leader>aa`: new `gp.nvim` chat
-- `<leader>at`: toggle `gp.nvim` chat
-- `<leader>ap`: open `gp.nvim` popup
-- `<leader>ar`: rewrite selected text with `gp.nvim`
-- `<leader>e`: open `:Ex`
-- `<leader>j`: open `:Ex`
-- `<leader>f`: FZF files (project root)
-- `<leader>F`: FZF git files
-- `<leader>k`: FZF buffer lines
-- `<leader>p`: FZF files (current dir)
-- `<leader>P`: FZF files (project root)
-- `<leader>r`: FZF recent files
-- `<leader>.`: resume last FZF picker
-- `<leader>g`: FZF live grep (current dir)
-- `<leader>G`: FZF live grep (project root)
-- `<leader>b`: FZF buffers
-- `<leader>c`: FZF commands
-- `<leader>d`: FZF document diagnostics
-- `<leader>D`: FZF workspace diagnostics
-- `<leader>s`: FZF git status
-- `<leader>h`: FZF help tags
-- `<leader>v`: FZF registers
-- `gd`: FZF definitions
-- `gr`: FZF references
-- `gi`: FZF implementations
-- `gt`: FZF type definitions
-- `K`: hover docs
+- `<leader>w`: pick a window
+- `<leader>s`: Flash jump
+- `S`: Flash Tree-sitter jump
+- `gd`: go to definition, with a Drupal import shortcut for PHP `use Drupal\...` lines
+- `gr`, `gi`, `gt`: LSP references, implementations, and type definitions through `fzf-lua`
+- `K`: hover documentation
 - `<leader>rn`: rename symbol
-- `<leader>ca`: code action
-- `[d` / `]d`: previous / next diagnostic
-- `[h` / `]h`: previous / next git hunk
-- `<leader>hp`: preview hunk
-- `<leader>hs`: stage hunk
-- `<leader>hr`: reset hunk
-- `<Tab>`: expand Emmet abbreviations in HTML/CSS/template buffers
+- `<leader>a`: code action
+- `<leader>li`: LSP info
+- `<leader>lf`: format buffer
+
+FZF mappings include project files, git files, live grep, buffer lines, diagnostics, symbols, registers, help tags, and recent files.
 
 ## Structure
 
-- [init.lua](/Users/guy/.config/nvim/init.lua): bootstrap and plugin loading
-- [lua/plugin_manager.lua](/Users/guy/.config/nvim/lua/plugin_manager.lua): `vim.pack` plugin registration and setup adapter
-- [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua): editor options, PATH bootstrap, filetype autocommands
-- [lua/keybindings.lua](/Users/guy/.config/nvim/lua/keybindings.lua): custom mappings
-- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin specs consumed by `vim.pack`
+- [init.lua](/Users/guy/.config/nvim/init.lua): startup and module loading
+- [lua/core/options.lua](/Users/guy/.config/nvim/lua/core/options.lua): editor options
+- [lua/core/autocmds.lua](/Users/guy/.config/nvim/lua/core/autocmds.lua): search, cursor restore, and folding autocommands
+- [lua/core/diagnostics.lua](/Users/guy/.config/nvim/lua/core/diagnostics.lua): diagnostic display settings
+- [lua/core/keymaps.lua](/Users/guy/.config/nvim/lua/core/keymaps.lua): keymaps and navigation helpers
+- [lua/plugins/init.lua](/Users/guy/.config/nvim/lua/plugins/init.lua): `vim.pack` plugin registration and plugin module loading
+- [lua/plugins](/Users/guy/.config/nvim/lua/plugins): plugin-specific setup modules
+- [after/ftplugin](/Users/guy/.config/nvim/after/ftplugin): filetype-specific buffer settings
+- [after/indent](/Users/guy/.config/nvim/after/indent): indentation overrides
+
+## Maintenance
+
+- Start Neovim with `nvim`; missing `vim.pack` plugins are installed on startup.
+- Run `:lua vim.pack.update()` or `<leader>u` to update plugins.
+- Run `:TSUpdate` after updating `nvim-treesitter`.
+- Run `:checkhealth vim.lsp` for LSP status.
+- Keep [nvim-pack-lock.json](/Users/guy/.config/nvim/nvim-pack-lock.json) under version control for reproducible installs.
 
 ## Notes
 
-- This config uses native `vim.lsp.enable()` instead of older `lspconfig.setup()` patterns.
-- `:LspInfo`, `:LspRestart`, and `:LspLog` are provided as compatibility commands on top of Neovim 0.12's `:lsp` command.
-- Missing external executables are skipped instead of throwing startup errors.
-- Drupal file patterns like `*.module`, `*.theme`, and Drupal YAML files are forced to the expected filetypes in [lua/settings.lua](/Users/guy/.config/nvim/lua/settings.lua).
+- This config uses native `vim.lsp.enable()` instead of older `require("lspconfig").setup()` patterns.
+- Neovim 0.12's `:lsp` command is the canonical interface for starting, stopping, and restarting LSP clients.
+- Missing external executables are skipped instead of causing startup errors.
+- PHP indentation is deliberately conservative in [after/ftplugin/php.lua](/Users/guy/.config/nvim/after/ftplugin/php.lua) and [after/indent/php.lua](/Users/guy/.config/nvim/after/indent/php.lua).
