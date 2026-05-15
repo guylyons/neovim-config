@@ -183,6 +183,7 @@ vim.lsp.config("emmet_language_server", {
 		"less",
 		"sass",
 		"scss",
+		"twig",
 	},
 })
 

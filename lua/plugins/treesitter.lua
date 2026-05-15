@@ -1,14 +1,24 @@
-local ok, treesitter = pcall(require, "nvim-treesitter.configs")
+local ok, treesitter = pcall(require, "nvim-treesitter")
 if not ok then
 	return
 end
 
-treesitter.setup({
-	highlight = {
-		enable = true,
-	},
-	indent = {
-		enable = true,
-		disable = { "php", "phpdoc", "html" },
-	},
+treesitter.setup()
+
+treesitter.install({
+	"bash",
+	"css",
+	"html",
+	"javascript",
+	"json",
+	"lua",
+	"php",
+	"phpdoc",
+	"python",
+	"query",
+	"twig",
+	"typescript",
+	"vim",
+	"vimdoc",
+	"yaml",
 })
