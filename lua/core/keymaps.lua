@@ -44,6 +44,7 @@ vim.keymap.set({ "n", "x", "o" }, "<leader>s", function()
 	require("flash").jump()
 end, { desc = "Flash jump" })
 
+-- Jump to Treesitter nodes with Flash from normal, visual, and operator-pending mode.
 vim.keymap.set({ "n", "x", "o" }, "S", function()
 	require("flash").treesitter()
 end, { desc = "Flash treesitter" })

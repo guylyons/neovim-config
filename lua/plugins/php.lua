@@ -1,3 +1,4 @@
+-- Debug helper for inspecting PHP indentation state in the current buffer.
 vim.api.nvim_create_user_command("PhpIndentInfo", function()
 	local lines = {
 		("filetype=%s"):format(vim.bo.filetype),
