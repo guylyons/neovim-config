@@ -1,6 +1,6 @@
 vim.g.user_emmet_install_global = 0
 vim.g.user_emmet_mode = "inv"
-vim.g.user_emmet_expandabbr_key = "<Tab>"
+vim.g.user_emmet_expandabbr_key = "<C-y>,"
 vim.g.user_emmet_settings = {
 	twig = {
 		extends = "html",
@@ -41,18 +41,6 @@ local function enable_emmet(bufnr)
 	vim.api.nvim_buf_call(bufnr, function()
 		vim.cmd("EmmetInstall")
 	end)
-
-	vim.keymap.set(
-		"i",
-		"<Tab>",
-		'<C-r>=emmet#isExpandable() ? emmet#util#closePopup() . emmet#expandAbbr(0,"") : "\\<Tab>"<CR>',
-		{
-			buffer = bufnr,
-			noremap = true,
-			silent = true,
-			desc = "Expand Emmet abbreviation",
-		}
-	)
 end
 
 vim.api.nvim_create_autocmd("FileType", {

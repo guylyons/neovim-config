@@ -147,12 +147,41 @@ if ok_fzf then
 		fzf.files({ cwd = get_root() })
 	end, { desc = "Fzf files (project root)" })
 
+	vim.keymap.set("n", "<leader>A", function()
+		fzf.files({
+			cwd = get_root(),
+			fd_opts = table.concat({
+				"--color=never",
+				"--type f",
+				"--hidden",
+				"--no-ignore",
+				"--exclude .git",
+			}, " "),
+		})
+	end, { desc = "Fzf all files (including ignored)" })
+
 	vim.keymap.set("n", "<leader>F", fzf.git_files, { desc = "Fzf git files" })
 	vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
 
 	vim.keymap.set("n", "<leader>g", function()
 		fzf.live_grep_native({ cwd = get_root() })
 	end, { desc = "Fzf live grep (project root)" })
+
+	vim.keymap.set("n", "<leader>G", function()
+		fzf.live_grep_native({
+			cwd = get_root(),
+			rg_opts = table.concat({
+				"--column",
+				"--line-number",
+				"--no-heading",
+				"--color=always",
+				"--smart-case",
+				"--hidden",
+				"--no-ignore",
+				"--glob '!**/.git/**'",
+			}, " "),
+		})
+	end, { desc = "Fzf live grep all (including ignored)" })
 
 	vim.keymap.set("n", "<leader>*", function()
 		fzf.grep_cword({ cwd = get_root() })
