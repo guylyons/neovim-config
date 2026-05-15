@@ -1,6 +1,7 @@
 local M = {}
 
 local namespace = vim.api.nvim_create_namespace("codex_edit")
+local spinner_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 
 local function notify(message, level)
 	vim.schedule(function()
@@ -70,6 +71,28 @@ end
 
 local function delete_file(path)
 	pcall(vim.uv.fs_unlink, path)
+end
+
+local function stop_spinner(spinner, keep_mark)
+	if not spinner then
+		return
+	end
+
+	if spinner.stopped then
+		return
+	end
+	spinner.stopped = true
+
+	if spinner.timer then
+		pcall(function()
+			spinner.timer:stop()
+			spinner.timer:close()
+		end)
+	end
+
+	if not keep_mark and vim.api.nvim_buf_is_valid(spinner.bufnr) then
+		vim.api.nvim_buf_del_extmark(spinner.bufnr, namespace, spinner.mark)
+	end
 end
 
 local function line_text(bufnr, line1, line2)
@@ -168,6 +191,46 @@ local function mark_range(bufnr, edit_range)
 	return mark_line_range(bufnr, edit_range.line1, edit_range.line2)
 end
 
+local function start_spinner(bufnr, start_mark)
+	local timer = vim.uv.new_timer()
+	local spinner = {
+		bufnr = bufnr,
+		frame = 1,
+		mark = start_mark,
+		timer = timer,
+	}
+
+	if not timer then
+		return spinner
+	end
+
+	timer:start(0, 120, function()
+		vim.schedule(function()
+			if not vim.api.nvim_buf_is_valid(bufnr) then
+				stop_spinner(spinner)
+				return
+			end
+
+			local pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, start_mark, {})
+			if #pos == 0 then
+				stop_spinner(spinner)
+				return
+			end
+
+			vim.api.nvim_buf_set_extmark(bufnr, namespace, pos[1], pos[2], {
+				id = start_mark,
+				right_gravity = false,
+				virt_text = { { spinner_frames[spinner.frame] .. " Working...", "Comment" } },
+				virt_text_pos = "inline",
+			})
+
+			spinner.frame = (spinner.frame % #spinner_frames) + 1
+		end)
+	end)
+
+	return spinner
+end
+
 local function apply_replacement(bufnr, edit_range, start_mark, end_mark, text)
 	local start_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, start_mark, {})
 	local end_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, end_mark, {})
@@ -203,7 +266,7 @@ function M.edit(opts)
 	local edit_range = visual_text_range(bufnr, opts) or line_range(opts.line1, opts.line2)
 	local text = selected_text(bufnr, edit_range)
 
-	if text == "" then
+	if text == "" and edit_range.kind == "text" then
 		notify("The selected range is empty.", vim.log.levels.ERROR)
 		return
 	end
@@ -214,6 +277,7 @@ function M.edit(opts)
 	end
 
 	local start_mark, end_mark = mark_range(bufnr, edit_range)
+	local spinner = start_spinner(bufnr, start_mark)
 	local output_file = vim.fn.tempname()
 	local prompt = codex_prompt(instruction, text)
 
@@ -242,20 +306,24 @@ function M.edit(opts)
 
 		vim.schedule(function()
 			if not vim.api.nvim_buf_is_valid(bufnr) then
+				stop_spinner(spinner)
 				return
 			end
 
 			if result.code ~= 0 then
+				stop_spinner(spinner)
 				local message = vim.trim(result.stderr or result.stdout or "Codex command failed.")
 				notify(message, vim.log.levels.ERROR)
 				return
 			end
 
 			if vim.trim(output) == "" then
+				stop_spinner(spinner)
 				notify("Codex returned an empty replacement.", vim.log.levels.ERROR)
 				return
 			end
 
+			stop_spinner(spinner, true)
 			apply_replacement(bufnr, edit_range, start_mark, end_mark, output)
 		end)
 	end)

@@ -1,5 +1,9 @@
 -- Guy Lyons
--- Custom NeoVim configuration
+-- Personal Neovim 0.12+ configuration repository.
+-- Loads editor settings, native vim.pack plugins, keymaps, completion,
+-- LSP, formatting, Tree-sitter, and other feature modules from lua/.
+-- "Debugging is twice as hard as writing the code in the first place." - Brian Kernighan
+-- "Simplicity is prerequisite for reliability." - Dennis Ritchie
 -- 2026
 
 if vim.loader and vim.loader.enable then
