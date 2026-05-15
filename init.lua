@@ -9,5 +9,6 @@ end
 require("core.options")
 require("core.autocmds")
 require("core.diagnostics")
+require("core.codex_edit").setup()
 require("plugins")
 require("core.keymaps")
