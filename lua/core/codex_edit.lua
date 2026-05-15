@@ -1,19 +1,31 @@
+--- Codex range-edit integration for Neovim.
+--- Builds edit prompts from buffer context, runs the Codex CLI, and applies returned replacements.
+--- 2026
 local M = {}
 
 local namespace = vim.api.nvim_create_namespace("codex_edit")
 local spinner_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
 
+---Show a scheduled Neovim notification for Codex edit status.
+---@param message string
+---@param level? integer
 local function notify(message, level)
 	vim.schedule(function()
 		vim.notify(message, level or vim.log.levels.INFO, { title = "Codex" })
 	end)
 end
 
+---Remove one surrounding Markdown code fence from Codex output when present.
+---@param text string
+---@return string
 local function strip_code_fence(text)
 	local fenced = text:match("^```[%w_%-%.]*[ \t]*\n(.*)\n```[ \t]*\n?$")
 	return fenced or text
 end
 
+---Normalize Codex replacement text into lines suitable for buffer APIs.
+---@param text string
+---@return string[]
 local function replacement_lines(text)
 	text = strip_code_fence(text:gsub("\r\n", "\n"):gsub("\r", "\n"))
 
@@ -24,6 +36,8 @@ local function replacement_lines(text)
 	return vim.split(text, "\n", { plain = true })
 end
 
+---Collect lightweight buffer context that helps Codex preserve local style.
+---@return { filetype: string, path: string }
 local function current_context()
 	local path = vim.api.nvim_buf_get_name(0)
 	if path == "" then
@@ -36,6 +50,10 @@ local function current_context()
 	}
 end
 
+---Build the strict edit prompt sent to `codex exec`.
+---@param instruction string
+---@param selected_text string
+---@return string
 local function codex_prompt(instruction, selected_text)
 	local context = current_context()
 
@@ -60,6 +78,10 @@ local function codex_prompt(instruction, selected_text)
 	}, "\n")
 end
 
+---Read Codex's clean final response file, falling back to stdout.
+---@param path string
+---@param stdout? string
+---@return string
 local function read_output_file(path, stdout)
 	local ok, lines = pcall(vim.fn.readfile, path)
 	if ok and #lines > 0 then
@@ -69,10 +91,15 @@ local function read_output_file(path, stdout)
 	return stdout or ""
 end
 
+---Best-effort cleanup for a temporary file.
+---@param path string
 local function delete_file(path)
 	pcall(vim.uv.fs_unlink, path)
 end
 
+---Stop the inline spinner and optionally preserve its extmark for replacement.
+---@param spinner? table
+---@param keep_mark? boolean
 local function stop_spinner(spinner, keep_mark)
 	if not spinner then
 		return
@@ -95,15 +122,28 @@ local function stop_spinner(spinner, keep_mark)
 	end
 end
 
+---Return whole-line text for an inclusive line range.
+---@param bufnr integer
+---@param line1 integer
+---@param line2 integer
+---@return string
 local function line_text(bufnr, line1, line2)
 	local lines = vim.api.nvim_buf_get_lines(bufnr, line1 - 1, line2, false)
 	return table.concat(lines, "\n")
 end
 
+---Return the byte length of a buffer line.
+---@param bufnr integer
+---@param row integer Zero-based row.
+---@return integer
 local function line_length(bufnr, row)
 	return #(vim.api.nvim_buf_get_lines(bufnr, row, row + 1, false)[1] or "")
 end
 
+---Resolve a charwise visual selection into a text-edit range when possible.
+---@param bufnr integer
+---@param opts table User command callback options.
+---@return table? edit_range
 local function visual_text_range(bufnr, opts)
 	if opts.range == 0 or vim.fn.visualmode() ~= "v" then
 		return nil
@@ -136,6 +176,10 @@ local function visual_text_range(bufnr, opts)
 	}
 end
 
+---Create a whole-line edit range.
+---@param line1 integer
+---@param line2 integer
+---@return { kind: "lines", line1: integer, line2: integer }
 local function line_range(line1, line2)
 	return {
 		kind = "lines",
@@ -144,6 +188,10 @@ local function line_range(line1, line2)
 	}
 end
 
+---Read the current buffer text covered by an edit range.
+---@param bufnr integer
+---@param edit_range table
+---@return string
 local function selected_text(bufnr, edit_range)
 	if edit_range.kind == "text" then
 		local lines = vim.api.nvim_buf_get_text(
@@ -160,6 +208,12 @@ local function selected_text(bufnr, edit_range)
 	return line_text(bufnr, edit_range.line1, edit_range.line2)
 end
 
+---Create extmarks around a whole-line range so the target survives edits.
+---@param bufnr integer
+---@param line1 integer
+---@param line2 integer
+---@return integer start_mark
+---@return integer end_mark
 local function mark_line_range(bufnr, line1, line2)
 	local end_line = vim.api.nvim_buf_get_lines(bufnr, line2 - 1, line2, false)[1] or ""
 	local start_mark = vim.api.nvim_buf_set_extmark(bufnr, namespace, line1 - 1, 0, {
@@ -172,6 +226,11 @@ local function mark_line_range(bufnr, line1, line2)
 	return start_mark, end_mark
 end
 
+---Create extmarks around a charwise text range.
+---@param bufnr integer
+---@param edit_range table
+---@return integer start_mark
+---@return integer end_mark
 local function mark_text_range(bufnr, edit_range)
 	local start_mark = vim.api.nvim_buf_set_extmark(bufnr, namespace, edit_range.start_row, edit_range.start_col, {
 		right_gravity = false,
@@ -183,6 +242,11 @@ local function mark_text_range(bufnr, edit_range)
 	return start_mark, end_mark
 end
 
+---Create range extmarks for either whole-line or charwise edits.
+---@param bufnr integer
+---@param edit_range table
+---@return integer start_mark
+---@return integer end_mark
 local function mark_range(bufnr, edit_range)
 	if edit_range.kind == "text" then
 		return mark_text_range(bufnr, edit_range)
@@ -191,6 +255,10 @@ local function mark_range(bufnr, edit_range)
 	return mark_line_range(bufnr, edit_range.line1, edit_range.line2)
 end
 
+---Render an inline spinner at the range start while Codex is running.
+---@param bufnr integer
+---@param start_mark integer
+---@return table spinner
 local function start_spinner(bufnr, start_mark)
 	local timer = vim.uv.new_timer()
 	local spinner = {
@@ -231,6 +299,12 @@ local function start_spinner(bufnr, start_mark)
 	return spinner
 end
 
+---Apply Codex's replacement to the marked range.
+---@param bufnr integer
+---@param edit_range table
+---@param start_mark integer
+---@param end_mark integer
+---@param text string
 local function apply_replacement(bufnr, edit_range, start_mark, end_mark, text)
 	local start_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, start_mark, {})
 	local end_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, end_mark, {})
@@ -255,6 +329,8 @@ local function apply_replacement(bufnr, edit_range, start_mark, end_mark, text)
 	notify("Applied Codex edit.")
 end
 
+---Run a Codex edit for the command-provided range.
+---@param opts table User command callback options.
 function M.edit(opts)
 	local instruction = vim.trim(opts.args or "")
 	if instruction == "" then
@@ -329,6 +405,7 @@ function M.edit(opts)
 	end)
 end
 
+---Register the `:CodexLine` and `:CodexEdit` user commands.
 function M.setup()
 	vim.api.nvim_create_user_command("CodexLine", function(opts)
 		local line = vim.api.nvim_win_get_cursor(0)[1]
