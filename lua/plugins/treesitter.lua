@@ -1,24 +1,25 @@
 local ok, treesitter = pcall(require, "nvim-treesitter")
 if not ok then
-	return
+  return
 end
 
-treesitter.setup()
+local parsers = {
+  "bash",
+  "css",
+  "html",
+  "javascript",
+  "json",
+  "lua",
+  "php",
+  "phpdoc",
+  "python",
+  "query",
+  "twig",
+  "typescript",
+  "vim",
+  "vimdoc",
+  "yaml",
+}
 
-treesitter.install({
-	"bash",
-	"css",
-	"html",
-	"javascript",
-	"json",
-	"lua",
-	"php",
-	"phpdoc",
-	"python",
-	"query",
-	"twig",
-	"typescript",
-	"vim",
-	"vimdoc",
-	"yaml",
-})
+treesitter.setup()
+treesitter.install(parsers)
