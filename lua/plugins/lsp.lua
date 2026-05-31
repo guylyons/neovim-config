@@ -188,6 +188,7 @@ enable_when_available("html", "vscode-html-language-server")
 enable_when_available("jsonls", "vscode-json-language-server")
 enable_when_available("emmet_language_server", "emmet-language-server")
 enable_when_available("yamlls", "yaml-language-server")
+enable_when_available("gopls", "gopls")
 
 create_lsp_compat_command("LspInfo", function()
 	vim.cmd("checkhealth vim.lsp")

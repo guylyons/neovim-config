@@ -54,6 +54,7 @@ local plugin_modules = {
 	"plugins.format",
 	"plugins.fzf",
 	"plugins.gitsigns",
+	"plugins.go",
 	"plugins.mason",
 	"plugins.material",
 	"plugins.neogit",

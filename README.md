@@ -8,6 +8,7 @@ Personal Neovim config for Neovim 0.12+, built around `vim.pack`, native LSP con
 - Git
 - `rg` for fast grep integration
 - `node` and `npm` for JavaScript/TypeScript, Emmet, YAML, and several language servers
+- `go` for Go development tools such as `gopls`
 - Optional language servers installed locally or through Mason
 
 ## Highlights
@@ -32,13 +33,14 @@ LSP servers are enabled only when their executable is available on `PATH`.
 - Bash: `bash-language-server`
 - YAML: `yaml-language-server`
 - Emmet: `emmet-language-server`
+- Go: `gopls`
 - TypeScript/JavaScript: `typescript-tools.nvim`
 
 TypeScript support intentionally uses `pmizio/typescript-tools.nvim` rather than `ts_ls`. Mason is configured with `automatic_enable = false`, so native LSP enablement remains explicit in [lua/plugins/lsp.lua](/Users/guy/.config/nvim/lua/plugins/lsp.lua).
 
 ## Formatting
 
-Formatting is intentionally manual to avoid noisy save-time diffs.
+Formatting is intentionally manual to avoid noisy save-time diffs, except Go buffers, which format and organize imports on save through `gopls`.
 
 - `:Format`: format the current buffer through an attached LSP client
 - `<leader>lf`: format from normal or visual mode

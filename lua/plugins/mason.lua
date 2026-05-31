@@ -10,6 +10,7 @@ mason_lspconfig.setup({
 		"bashls",
 		"cssls",
 		"emmet_language_server",
+		"gopls",
 		"html",
 		"intelephense",
 		"jsonls",
