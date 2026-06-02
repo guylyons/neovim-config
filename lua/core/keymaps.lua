@@ -76,6 +76,29 @@ local function get_root()
 	return start_path
 end
 
+local function get_visual_selection()
+	local mode = vim.fn.mode()
+	if mode ~= "v" and mode ~= "V" and mode ~= "\22" then
+		return nil
+	end
+
+	local ok, lines = pcall(vim.fn.getregion, vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode })
+	if not ok or #lines == 0 then
+		return nil
+	end
+
+	local selection = vim.trim(table.concat(lines, "\n"))
+	if selection == "" then
+		return nil
+	end
+
+	return selection
+end
+
+local function get_grep_seed()
+	return get_visual_selection() or vim.fn.expand("<cword>")
+end
+
 local function open_path_if_exists(path)
 	if not path or path == "" or vim.uv.fs_stat(path) == nil then
 		return false
@@ -167,9 +190,10 @@ if ok_fzf then
 		fzf.live_grep_native({ cwd = get_root() })
 	end, { desc = "Fzf live grep (project root)" })
 
-	vim.keymap.set("n", "<leader>G", function()
+	vim.keymap.set({ "n", "x" }, "<leader>G", function()
 		fzf.live_grep_native({
 			cwd = get_root(),
+			search = get_grep_seed(),
 			rg_opts = table.concat({
 				"--column",
 				"--line-number",
@@ -181,7 +205,7 @@ if ok_fzf then
 				"--glob '!**/.git/**'",
 			}, " "),
 		})
-	end, { desc = "Fzf live grep all (including ignored)" })
+	end, { desc = "Fzf grep current word or selection all (including ignored)" })
 
 	vim.keymap.set("n", "<leader>*", function()
 		fzf.grep_cword({ cwd = get_root() })
