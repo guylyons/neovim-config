@@ -9,6 +9,9 @@ material.setup({
 		sidebars = true,
 		floating_windows = true,
 	},
+	disable = {
+		background = true,
+	},
 	styles = {
 		comments = { italic = true },
 		keywords = { bold = true },
