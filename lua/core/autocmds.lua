@@ -1,13 +1,12 @@
-vim.api.nvim_create_autocmd("CursorMoved", {
-	group = vim.api.nvim_create_augroup("auto-hlsearch", { clear = true }),
-	callback = function()
-		if vim.v.hlsearch == 1 and vim.fn.searchcount().exact_match == 0 then
-			vim.schedule(function()
-				vim.cmd.nohlsearch()
-			end)
+-- A highly efficient, zero-autocmd way to clear hlsearch
+vim.on_key(function(char)
+	if vim.fn.mode() == "n" then
+		local new_hlsearch = vim.tbl_contains({ "<CR>", "n", "N", "*", "#", "?", "/" }, vim.fn.keytrans(char))
+		if vim.opt.hlsearch:get() ~= new_hlsearch then
+			vim.opt.hlsearch = new_hlsearch
 		end
-	end,
-})
+	end
+end, vim.api.nvim_create_namespace("auto-hlsearch"))
 
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = vim.api.nvim_create_augroup("resume-last-edit-position", { clear = true }),
