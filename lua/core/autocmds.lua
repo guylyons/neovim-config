@@ -15,34 +15,29 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 		local line = mark[1]
 		local col = mark[2]
 		if line > 0 and line <= vim.api.nvim_buf_line_count(0) then
-			vim.api.nvim_win_set_cursor(0, { line, col })
+			-- Use pcall to prevent errors if the column is out of bounds
+			pcall(vim.api.nvim_win_set_cursor, 0, { line, col })
 		end
 	end,
 })
 
-local function configure_code_folding(bufnr)
-	if vim.bo[bufnr].buftype ~= "" then
-		return
-	end
-
-	local winid = vim.fn.bufwinid(bufnr)
-	if winid == -1 then
-		return
-	end
-
-	if pcall(vim.treesitter.start, bufnr) then
-		vim.wo[winid].foldmethod = "expr"
-		vim.wo[winid].foldexpr = "v:lua.vim.treesitter.foldexpr()"
-		return
-	end
-
-	vim.wo[winid].foldmethod = "indent"
-	vim.wo[winid].foldexpr = "0"
-end
-
 vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 	group = vim.api.nvim_create_augroup("configure-code-folding", { clear = true }),
 	callback = function(args)
-		configure_code_folding(args.buf)
+		if vim.bo[args.buf].buftype ~= "" then
+			return
+		end
+
+		-- If treesitter can attach (or is already attached by a plugin), use it
+		if pcall(vim.treesitter.start, args.buf) then
+			-- Use vim.opt_local to safely set options for the current window/buffer
+			vim.opt_local.foldmethod = "expr"
+			vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+		else
+			-- Fallback
+			vim.opt_local.foldmethod = "indent"
+			vim.opt_local.foldexpr = "0"
+		end
 	end,
 })
+
