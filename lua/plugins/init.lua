@@ -1,5 +1,6 @@
 vim.pack.add({
 	"https://github.com/NeogitOrg/neogit",
+	"https://github.com/yannvanhalewyn/jujutsu.nvim",
 	"https://github.com/L3MON4D3/LuaSnip",
 	"https://github.com/lewis6991/gitsigns.nvim",
 	"https://github.com/hrsh7th/cmp-buffer",
@@ -57,6 +58,7 @@ local plugin_modules = {
 	"plugins.go",
 	"plugins.mason",
 	"plugins.material",
+	"plugins.jujutsu",
 	"plugins.neogit",
 	"plugins.nvim-window-picker",
 	"plugins.treesitter",

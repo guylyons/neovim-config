@@ -18,7 +18,7 @@ Personal Neovim config for Neovim 0.12+, built around `vim.pack`, native LSP con
 - Syntax and folds: `nvim-treesitter` on the `main` branch
 - Completion: `nvim-cmp` with LuaSnip, LSP, path, and buffer sources
 - Fuzzy finding: `fzf-lua`
-- Git UI: `neogit`, `diffview.nvim`, and `gitsigns.nvim`
+- Git UI: `neogit`, `jujutsu.nvim`, `diffview.nvim`, and `gitsigns.nvim`
 - Theme: `material-deep-ocean`
 - Navigation helpers: `flash.nvim`, `which-key.nvim`, and `nvim-window-picker`
 
@@ -80,6 +80,7 @@ Core mappings live in [lua/core/keymaps.lua](/Users/guy/.config/nvim/lua/core/ke
 - `<leader>O`: open containing folder
 - `<leader>u`: run `vim.pack.update()`
 - `<leader>m`: open Neogit
+- `<leader>J`: open Jujutsu log
 - `<leader>w`: pick a window
 - `<leader>s`: Flash jump
 - `S`: Flash Tree-sitter jump

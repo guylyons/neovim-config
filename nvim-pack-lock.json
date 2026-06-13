@@ -44,6 +44,10 @@
       "rev": "944ef13cc8d8fe8b846c91f36041c8dfb85ca000",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
+    "jujutsu.nvim": {
+      "rev": "17ab008d71cbcd31f8c2891e11cb758579f597c0",
+      "src": "https://github.com/yannvanhalewyn/jujutsu.nvim"
+    },
     "mason-lspconfig.nvim": {
       "rev": "25f609e7fca78af7cede4f9fa3af8a94b1c4950b",
       "src": "https://github.com/williamboman/mason-lspconfig.nvim"
