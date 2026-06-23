@@ -23,7 +23,7 @@ gitsigns.setup({
 	preview_config = { border = "rounded" },
 	on_attach = function(bufnr)
 		local map = function(mode, lhs, rhs, desc)
-			vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+			vim.keymap.set(mode, lhs, rhs, { buf = bufnr, desc = desc })
 		end
 
 		map("n", "]h", gitsigns.next_hunk, "Next hunk")

@@ -38,7 +38,14 @@ end, { silent = true, desc = "Update plugins" })
 
 vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
 vim.keymap.set("n", "<leader>J", "<cmd>JJ<CR>", { desc = "Jujutsu log" })
-vim.keymap.set("n", "<leader>j", ":Ex ", { desc = "Open Ex and allow entering a path" })
+vim.keymap.set("n", "<leader>j", function()
+	local path = vim.fn.expand("%:p:h")
+	if path == "" then
+		path = vim.uv.cwd() or "."
+	end
+
+	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(path) .. "/", "n")
+end, { desc = "Find file from current buffer directory" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { silent = true })
 
 -- Flash mappings are perfectly written
@@ -150,7 +157,7 @@ vim.keymap.set("n", "gd", function()
 	if jump_to_drupal_import_definition() then
 		return
 	end
-	vim.lsp.buf.definition({ reuse_win = true })
+	vim.lsp.buf.definition()
 end, { desc = "Go to definition" })
 
 -- Fzf-lua setup is clean and tight
@@ -159,7 +166,7 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>f", function() fzf.files({ cwd = get_root() }) end, { desc = "Fzf files (project root)" })
 	vim.keymap.set("n", "<leader>p", function() fzf.files({ cwd = get_root() }) end, { desc = "Fzf files (project root)" })
 	vim.keymap.set("n", "<leader>P", function() fzf.files({ cwd = get_cwd() }) end, { desc = "Fzf files (current dir)" })
-	
+
 	vim.keymap.set("n", "<leader>A", function()
 		fzf.files({
 			cwd = get_root(),
@@ -200,4 +207,6 @@ end
 vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
-vim.keymap.set("n", "<leader>li", "<cmd>LspInfo<CR>", { desc = "LSP info" })
+vim.keymap.set("n", "<leader>li", function()
+	vim.cmd("checkhealth vim.lsp")
+end, { desc = "LSP health" })

@@ -87,10 +87,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 
 		if client:supports_method("textDocument/formatting") then
-			vim.api.nvim_clear_autocmds({ group = format_group, buffer = args.buf })
+			vim.api.nvim_clear_autocmds({ group = format_group, buf = args.buf })
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				group = format_group,
-				buffer = args.buf,
+				buf = args.buf,
 				callback = function()
 					format_go_buffer(args.buf)
 				end,

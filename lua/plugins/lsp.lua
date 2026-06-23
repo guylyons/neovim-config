@@ -116,7 +116,7 @@ local function show_lsp_info()
 	vim.api.nvim_buf_set_lines(info_buf, 0, -1, false, lines)
 	vim.bo[info_buf].modifiable = false
 	vim.keymap.set("n", "q", "<cmd>close<cr>", {
-		buffer = info_buf,
+		buf = info_buf,
 		silent = true,
 		desc = "Close LSP info",
 	})
@@ -199,6 +199,6 @@ create_lsp_compat_command("LspRestart", function()
 end, "Restart LSP clients")
 
 create_lsp_compat_command("LspLog", function()
-	local log_path = vim.fs.joinpath(vim.fn.stdpath("state"), "lsp.log")
+	local log_path = vim.lsp.log.get_filename()
 	vim.cmd("edit " .. vim.fn.fnameescape(log_path))
 end, "Show LSP log")
