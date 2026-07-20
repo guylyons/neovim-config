@@ -3,6 +3,8 @@ if not ok then
 	return
 end
 
+pcall(require, "nvim-web-devicons")
+
 fzf.setup({
 	fzf_opts = {
 		["--ansi"] = true,
