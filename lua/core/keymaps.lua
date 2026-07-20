@@ -37,8 +37,14 @@ vim.keymap.set("n", "<leader>u", function()
 end, { silent = true, desc = "Update plugins" })
 
 vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
-vim.keymap.set("n", "<leader>J", "<cmd>JJ<CR>", { desc = "Jujutsu log" })
-vim.keymap.set("n", "<leader>j", function()
+local ok_jj, jj = pcall(require, "jujutsu-nvim")
+if ok_jj then
+	vim.keymap.set("n", "<leader>j", jj.log, { desc = "JJ Log" })
+else
+	vim.keymap.set("n", "<leader>j", "<cmd>JJ<CR>", { desc = "JJ Log" })
+end
+vim.keymap.set("n", "<leader>J", "<cmd>JJ ", { desc = "JJ command" })
+vim.keymap.set("n", "<leader>e", function()
 	local path = vim.fn.expand("%:p:h")
 	if path == "" then
 		path = vim.uv.cwd() or "."
@@ -210,3 +216,6 @@ vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Cod
 vim.keymap.set("n", "<leader>li", function()
 	vim.cmd("checkhealth vim.lsp")
 end, { desc = "LSP health" })
+vim.keymap.set("n", "<leader>lf", function()
+	vim.cmd("checkhealth fzf_lua")
+end, { desc = "Fzf-lua health" })
