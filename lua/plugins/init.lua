@@ -61,7 +61,6 @@ local plugin_modules = {
 	"plugins.jujutsu",
 	"plugins.neogit",
 	"plugins.nvim-window-picker",
-	"plugins.treesitter",
 	"plugins.completion",
 	"plugins.lsp",
 	"plugins.php",
