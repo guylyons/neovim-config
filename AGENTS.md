@@ -3,11 +3,15 @@
 ## Project Structure & Module Organization
 This repository is a personal Neovim configuration for Neovim 0.12+.
 
-- `init.lua`: entry point; loads settings, plugins, keymaps, and completion config.
-- `lua/settings.lua`: core editor options, filetype autocommands, environment/PATH bootstrap.
-- `lua/plugin_manager.lua`: plugin registration and loading through native `vim.pack`.
-- `lua/plugins/*.lua`: one file per plugin or feature area (`treesitter`, `lspconfig`, `conform`, etc.).
-- `lua/keybindings.lua`: custom keymaps.
+- `init.lua`: entry point; loads core modules, plugins, and keymaps.
+- `lua/core/options.lua`: core editor options.
+- `lua/core/autocmds.lua`: search, cursor-restore, and Tree-sitter folding autocommands.
+- `lua/core/diagnostics.lua`: diagnostic display settings.
+- `lua/core/keymaps.lua`: custom keymaps and navigation helpers.
+- `lua/core/codex_edit.lua`: Codex range-edit integration (`:CodexEdit`, `:CodexLine`).
+- `lua/plugins/init.lua`: plugin registration and loading through native `vim.pack`.
+- `lua/plugins/*.lua`: one file per plugin or feature area (`treesitter`, `lsp`, `format`, etc.).
+- `after/ftplugin/*` and `after/indent/*`: filetype-specific buffer and indentation overrides.
 
 There is no dedicated `tests/` directory in this repo.
 

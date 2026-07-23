@@ -49,6 +49,7 @@ end
 
 -- Load plugins
 local plugin_modules = {
+	"plugins.treesitter",
 	"plugins.alpha",
 	"plugins.emmet",
 	"plugins.flash",
