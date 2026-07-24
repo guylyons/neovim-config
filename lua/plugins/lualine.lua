@@ -3,16 +3,27 @@ if not ok then
 	return
 end
 
+local theme = "material-nvim"
+local theme_ok, material_theme = pcall(require, "lualine.themes.material-nvim")
+if theme_ok then
+	theme = vim.deepcopy(material_theme)
+	for _, palette in pairs(theme) do
+		if type(palette) == "table" and palette.a then
+			palette.a.fg = "#000000"
+		end
+	end
+end
+
 lualine.setup({
 	options = {
 		-- material.nvim ships its own palette-matched theme (reads the live
 		-- deep-ocean palette). Use it instead of lualine's generic "material",
 		-- whose static colors clash with material-deep-ocean.
-		theme = "material-nvim",
+		theme = theme,
 		icons_enabled = true,
 		globalstatus = true,
-		component_separators = { left = "", right = "" },
-		section_separators = { left = "", right = "" },
+		component_separators = { left = "", right = "" },
+		section_separators = { left = "", right = "" },
 	},
 	sections = {
 		lualine_a = { "mode" },
