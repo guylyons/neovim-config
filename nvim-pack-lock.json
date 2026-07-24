@@ -48,6 +48,10 @@
       "rev": "17ab008d71cbcd31f8c2891e11cb758579f597c0",
       "src": "https://github.com/yannvanhalewyn/jujutsu.nvim"
     },
+    "lualine.nvim": {
+      "rev": "221ce6b2d999187044529f49da6554a92f740a96",
+      "src": "https://github.com/nvim-lualine/lualine.nvim"
+    },
     "mason-lspconfig.nvim": {
       "rev": "25f609e7fca78af7cede4f9fa3af8a94b1c4950b",
       "src": "https://github.com/williamboman/mason-lspconfig.nvim"
