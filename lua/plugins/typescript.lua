@@ -1,50 +1,111 @@
-local ok, typescript_tools = pcall(require, "typescript-tools")
-if not ok then
-	return
+-- TypeScript 7 ships a native (Go) language server instead of the old
+-- `typescript/lib/tsserver.js`. It is exposed as `tsgo` by
+-- @typescript/native-preview and as `tsc` by the `typescript` package itself.
+-- nvim-lspconfig provides `lsp/tsgo.lua` (monorepo + Deno aware root_dir);
+-- we inherit that and only override how the binary is located, plus settings.
+
+local function ts_major(root_dir)
+	local package_json = root_dir .. "/node_modules/typescript/package.json"
+	local ok, contents = pcall(vim.fn.readfile, package_json)
+	if not ok or vim.tbl_isempty(contents) then
+		return nil
+	end
+
+	local decoded_ok, decoded = pcall(vim.json.decode, table.concat(contents, "\n"))
+	if not decoded_ok or type(decoded) ~= "table" or type(decoded.version) ~= "string" then
+		return nil
+	end
+
+	return tonumber(decoded.version:match("^(%d+)"))
 end
 
-typescript_tools.setup({
-	complete_function_calls = true,
-	include_completions_with_insert_text = true,
-	jsx_close_tag = {
-		enable = true,
-		filetypes = { "javascriptreact", "typescriptreact" },
-	},
+-- Prefer a project-local server, then a global one. `tsgo` is unambiguous;
+-- `tsc` only speaks LSP from TypeScript 7 onwards, so gate the local one on
+-- the installed major version.
+local function resolve_cmd(root_dir)
+	local local_tsgo = root_dir and (root_dir .. "/node_modules/.bin/tsgo")
+	if local_tsgo and vim.fn.executable(local_tsgo) == 1 then
+		return local_tsgo
+	end
+
+	local local_tsc = root_dir and (root_dir .. "/node_modules/.bin/tsc")
+	if local_tsc and vim.fn.executable(local_tsc) == 1 then
+		local major = ts_major(root_dir)
+		if major and major >= 7 then
+			return local_tsc
+		end
+	end
+
+	if vim.fn.executable("tsgo") == 1 then
+		return "tsgo"
+	end
+
+	return "tsc"
+end
+
+vim.lsp.config("tsgo", {
+	cmd = function(dispatchers, config)
+		local root_dir = (config or {}).root_dir
+		return vim.lsp.rpc.start({ resolve_cmd(root_dir), "--lsp", "--stdio" }, dispatchers)
+	end,
 	settings = {
-		separate_diagnostic_server = false,
-		publish_diagnostic_on = "change",
-		expose_as_code_action = {
-			"add_missing_imports",
-			"remove_unused",
-			"organize_imports",
-			"fix_all",
+		typescript = {
+			inlayHints = {
+				parameterNames = {
+					enabled = "all",
+					suppressWhenArgumentMatchesName = true,
+				},
+				parameterTypes = { enabled = true },
+				variableTypes = {
+					enabled = true,
+					suppressWhenTypeMatchesName = true,
+				},
+				propertyDeclarationTypes = { enabled = true },
+				functionLikeReturnTypes = { enabled = true },
+				enumMemberValues = { enabled = true },
+			},
+			preferences = {
+				quoteStyle = "double",
+				importModuleSpecifier = "non-relative",
+				includePackageJsonAutoImports = "auto",
+			},
+			suggest = {
+				completeFunctionCalls = true,
+				autoImports = true,
+				includeCompletionsForImportStatements = true,
+			},
 		},
-		tsserver_max_memory = "auto",
-		tsserver_file_preferences = {
-			includeCompletionsForImportStatements = true,
-			includeCompletionsForModuleExports = true,
-			includeCompletionsWithInsertText = true,
-			includeCompletionsWithSnippetText = true,
-			includeAutomaticOptionalChainCompletions = true,
-			includePackageJsonAutoImports = "auto",
-			jsxAttributeCompletionStyle = "auto",
-			quotePreference = "double",
-			importModuleSpecifierPreference = "non-relative",
-			includeInlayParameterNameHints = "all",
-			includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-			includeInlayFunctionParameterTypeHints = true,
-			includeInlayVariableTypeHints = true,
-			includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-			includeInlayPropertyDeclarationTypeHints = true,
-			includeInlayFunctionLikeReturnTypeHints = true,
-			includeInlayEnumMemberValueHints = true,
-		},
-		tsserver_format_options = {
-			allowIncompleteCompletions = false,
-			allowRenameOfImportPath = false,
+		javascript = {
+			inlayHints = {
+				parameterNames = {
+					enabled = "all",
+					suppressWhenArgumentMatchesName = true,
+				},
+				parameterTypes = { enabled = true },
+				variableTypes = {
+					enabled = true,
+					suppressWhenTypeMatchesName = true,
+				},
+				propertyDeclarationTypes = { enabled = true },
+				functionLikeReturnTypes = { enabled = true },
+				enumMemberValues = { enabled = true },
+			},
+			preferences = {
+				quoteStyle = "double",
+				importModuleSpecifier = "non-relative",
+			},
+			suggest = {
+				completeFunctionCalls = true,
+				autoImports = true,
+				includeCompletionsForImportStatements = true,
+			},
 		},
 	},
 })
+
+if vim.fn.executable("tsgo") == 1 or vim.fn.executable("tsc") == 1 then
+	vim.lsp.enable("tsgo")
+end
 
 local ts_filetypes = {
 	javascript = true,

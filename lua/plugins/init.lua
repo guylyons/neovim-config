@@ -18,7 +18,6 @@ vim.pack.add({
 	"https://github.com/mattn/emmet-vim",
 	"https://github.com/neovim/nvim-lspconfig",
 	"https://github.com/nvim-tree/nvim-web-devicons",
-	"https://github.com/pmizio/typescript-tools.nvim",
 	"https://github.com/s1n7ax/nvim-window-picker",
 	"https://github.com/sindrets/diffview.nvim",
 	"https://github.com/williamboman/mason-lspconfig.nvim",
