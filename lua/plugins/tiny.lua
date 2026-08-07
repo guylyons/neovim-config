@@ -1,9 +1,4 @@
-local ok, tiny = pcall(require, "tiny-inline-diagnostic")
-if not ok then
-	return
-end
-
-tiny.setup({
+require("tiny-inline-diagnostic").setup({
 	preset = "modern",
 	options = {
 		show_source = {

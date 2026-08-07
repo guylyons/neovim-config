@@ -44,17 +44,20 @@ local plugin_modules = {
 	"plugins.nvim-window-picker",
 	"plugins.completion",
 	"plugins.lsp",
-	"plugins.php",
 	"plugins.typescript",
 	"plugins.whichkey",
 	"plugins.tiny",
 }
 
+-- Each module is isolated: one failing plugin reports itself and the rest still
+-- load, so the modules themselves do not need their own pcall guards.
 for _, module_name in ipairs(plugin_modules) do
 	local ok, err = pcall(require, module_name)
 	if not ok then
+		-- Lua appends the whole package.path to "module not found"; keep line one.
+		local reason = tostring(err):match("^[^\n]*") or "unknown error"
 		vim.schedule(function()
-			vim.notify(("Failed to load %s: %s"):format(module_name, err), vim.log.levels.ERROR)
+			vim.notify(("Failed to load %s: %s"):format(module_name, reason), vim.log.levels.ERROR)
 		end)
 	end
 end

@@ -10,7 +10,5 @@ vim.bo.expandtab = true
 vim.b.did_indent = 1
 
 -- PHP indentation debugging:
---   :setlocal indentexpr?
---   :setlocal filetype?
---   :verbose setlocal indentexpr?
---   :PhpIndentInfo
+--   :verbose setlocal indentexpr?   (also reports which script last set it)
+--   :verbose setlocal indentkeys?

@@ -9,10 +9,7 @@
 -- entirely so startup never errors -- buffers simply fall back to regex syntax
 -- and indent folds until `tree-sitter` is available. Install it once with:
 --   brew install tree-sitter-cli
-local ok, ts = pcall(require, "nvim-treesitter")
-if not ok then
-	return
-end
+local ts = require("nvim-treesitter")
 
 -- Parsers to keep installed. Anything not in the plugin's available set is
 -- ignored, so listing an unknown name here is harmless.

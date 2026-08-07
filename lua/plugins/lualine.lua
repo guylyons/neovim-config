@@ -1,7 +1,4 @@
-local ok, lualine = pcall(require, "lualine")
-if not ok then
-	return
-end
+local lualine = require("lualine")
 
 local theme = "material-nvim"
 local theme_ok, material_theme = pcall(require, "lualine.themes.material-nvim")

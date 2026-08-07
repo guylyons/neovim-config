@@ -1,11 +1,7 @@
-local ok, fzf = pcall(require, "fzf-lua")
-if not ok then
-	return
-end
-
+-- Optional: fzf-lua renders file icons only when devicons is present.
 pcall(require, "nvim-web-devicons")
 
-fzf.setup({
+require("fzf-lua").setup({
 	fzf_opts = {
 		["--ansi"] = true,
 	},

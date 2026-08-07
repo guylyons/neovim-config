@@ -1,8 +1,5 @@
-local ok_cmp, cmp = pcall(require, "cmp")
-local ok_luasnip, luasnip = pcall(require, "luasnip")
-if not (ok_cmp and ok_luasnip) then
-	return
-end
+local cmp = require("cmp")
+local luasnip = require("luasnip")
 
 local function has_words_before()
 	local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))

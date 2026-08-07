@@ -1,9 +1,4 @@
-local ok, material = pcall(require, "material")
-if not ok then
-	return
-end
-
-material.setup({
+require("material").setup({
 	contrast = {
 		terminal = false,
 		sidebars = true,

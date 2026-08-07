@@ -1,8 +1,3 @@
-local ok, jujutsu = pcall(require, "jujutsu-nvim")
-if not ok then
-	return
-end
-
-jujutsu.setup({
+require("jujutsu-nvim").setup({
 	diff_preset = "diffview",
 })
