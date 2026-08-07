@@ -4,6 +4,10 @@ vim.g.maplocalleader = "\\"
 vim.opt.wrap = false
 vim.opt.termguicolors = true
 
+-- Never show the tabline. Neogit and diffview open in their own tabpages, which
+-- would otherwise pop a "[Scratch]" tab bar above the window.
+vim.opt.showtabline = 0
+
 if vim.fn.executable("rg") == 1 then
 	vim.opt.grepprg = "rg --vimgrep --smart-case"
 	vim.opt.grepformat = "%f:%l:%c:%m,%f:%l:%m"
