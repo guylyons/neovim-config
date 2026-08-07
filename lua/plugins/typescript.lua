@@ -43,63 +43,43 @@ local function resolve_cmd(root_dir)
 	return "tsc"
 end
 
+-- tsgo namespaces identical settings under `typescript` and `javascript`.
+local function language_settings(extra_preferences)
+	return {
+		inlayHints = {
+			parameterNames = {
+				enabled = "all",
+				suppressWhenArgumentMatchesName = true,
+			},
+			parameterTypes = { enabled = true },
+			variableTypes = {
+				enabled = true,
+				suppressWhenTypeMatchesName = true,
+			},
+			propertyDeclarationTypes = { enabled = true },
+			functionLikeReturnTypes = { enabled = true },
+			enumMemberValues = { enabled = true },
+		},
+		preferences = vim.tbl_extend("force", {
+			quoteStyle = "double",
+			importModuleSpecifier = "non-relative",
+		}, extra_preferences or {}),
+		suggest = {
+			completeFunctionCalls = true,
+			autoImports = true,
+			includeCompletionsForImportStatements = true,
+		},
+	}
+end
+
 vim.lsp.config("tsgo", {
 	cmd = function(dispatchers, config)
 		local root_dir = (config or {}).root_dir
 		return vim.lsp.rpc.start({ resolve_cmd(root_dir), "--lsp", "--stdio" }, dispatchers)
 	end,
 	settings = {
-		typescript = {
-			inlayHints = {
-				parameterNames = {
-					enabled = "all",
-					suppressWhenArgumentMatchesName = true,
-				},
-				parameterTypes = { enabled = true },
-				variableTypes = {
-					enabled = true,
-					suppressWhenTypeMatchesName = true,
-				},
-				propertyDeclarationTypes = { enabled = true },
-				functionLikeReturnTypes = { enabled = true },
-				enumMemberValues = { enabled = true },
-			},
-			preferences = {
-				quoteStyle = "double",
-				importModuleSpecifier = "non-relative",
-				includePackageJsonAutoImports = "auto",
-			},
-			suggest = {
-				completeFunctionCalls = true,
-				autoImports = true,
-				includeCompletionsForImportStatements = true,
-			},
-		},
-		javascript = {
-			inlayHints = {
-				parameterNames = {
-					enabled = "all",
-					suppressWhenArgumentMatchesName = true,
-				},
-				parameterTypes = { enabled = true },
-				variableTypes = {
-					enabled = true,
-					suppressWhenTypeMatchesName = true,
-				},
-				propertyDeclarationTypes = { enabled = true },
-				functionLikeReturnTypes = { enabled = true },
-				enumMemberValues = { enabled = true },
-			},
-			preferences = {
-				quoteStyle = "double",
-				importModuleSpecifier = "non-relative",
-			},
-			suggest = {
-				completeFunctionCalls = true,
-				autoImports = true,
-				includeCompletionsForImportStatements = true,
-			},
-		},
+		typescript = language_settings({ includePackageJsonAutoImports = "auto" }),
+		javascript = language_settings(),
 	},
 })
 
@@ -107,25 +87,12 @@ if vim.fn.executable("tsgo") == 1 or vim.fn.executable("tsc") == 1 then
 	vim.lsp.enable("tsgo")
 end
 
-local ts_filetypes = {
-	javascript = true,
-	javascriptreact = true,
-	typescript = true,
-	typescriptreact = true,
-	tsx = true,
-	jsx = true,
-}
-
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("typescript-inlay-hints", { clear = true }),
 	callback = function(args)
-		local ft = vim.bo[args.buf].filetype
-		if not ts_filetypes[ft] then
-			return
-		end
-
-		if vim.lsp.get_client_by_id(args.data.client_id) then
-			pcall(vim.lsp.inlay_hint.enable, true, { bufnr = args.buf })
+		local client = vim.lsp.get_client_by_id(args.data.client_id)
+		if client and client.name == "tsgo" and client:supports_method("textDocument/inlayHint") then
+			vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
 		end
 	end,
 })

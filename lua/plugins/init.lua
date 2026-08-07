@@ -26,28 +26,7 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 })
 
-local function notify_error(message)
-	vim.schedule(function()
-		vim.notify(message, vim.log.levels.ERROR)
-	end)
-end
-
--- Require Neovim 0.12+
-if vim.fn.has("nvim-0.12") == 0 then
-	notify_error("This config requires Neovim 0.12+ (vim.pack).")
-	return
-end
-
--- Safe module loader
-local function load_module(module_name)
-	local ok, err = pcall(require, module_name)
-	if not ok then
-		notify_error(("Failed to load %s: %s"):format(module_name, err))
-	end
-	return ok
-end
-
--- Load plugins
+-- Loaded in order: colorscheme before statusline, LSP before language modules.
 local plugin_modules = {
 	"plugins.treesitter",
 	"plugins.alpha",
@@ -72,5 +51,10 @@ local plugin_modules = {
 }
 
 for _, module_name in ipairs(plugin_modules) do
-	load_module(module_name)
+	local ok, err = pcall(require, module_name)
+	if not ok then
+		vim.schedule(function()
+			vim.notify(("Failed to load %s: %s"):format(module_name, err), vim.log.levels.ERROR)
+		end)
+	end
 end

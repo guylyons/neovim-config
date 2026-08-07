@@ -1,3 +1,29 @@
+-- Directory of the current buffer (netrw-aware), falling back to the cwd.
+local function get_cwd()
+	if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
+		return vim.b.netrw_curdir
+	end
+	local bufname = vim.api.nvim_buf_get_name(0)
+	if bufname ~= "" then
+		return vim.fn.fnamemodify(bufname, ":h")
+	end
+	return vim.uv.cwd() or "."
+end
+
+-- Nearest enclosing Git worktree, or the buffer directory when there is none.
+local function get_root()
+	local start_path = get_cwd()
+	local git_root = vim.fs.find(".git", {
+		path = start_path,
+		upward = true,
+		type = "directory",
+	})[1]
+	if git_root then
+		return vim.fs.dirname(git_root)
+	end
+	return start_path
+end
+
 -- 'noremap = true' is dropped entirely because it's the default
 vim.keymap.set("i", "jj", "<Esc>", { silent = true })
 
@@ -25,11 +51,7 @@ vim.keymap.set("n", "<leader>Q", "<cmd>qa<CR>", { silent = true, desc = "Quit al
 vim.keymap.set("n", "<leader>;", "<cmd>qa<CR>", { silent = true })
 
 vim.keymap.set("n", "<leader>O", function()
-	local path = vim.fn.expand("%:p:h")
-	if path == "" then
-		path = vim.uv.cwd() or "."
-	end
-	vim.ui.open(path) -- Brilliant use of 0.10+ built-ins!
+	vim.ui.open(get_cwd())
 end, { silent = true, desc = "Open containing folder" })
 
 vim.keymap.set("n", "<leader>u", function()
@@ -40,12 +62,7 @@ vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
 vim.keymap.set("n", "<leader>j", "<cmd>Ex <CR> ", { desc = "Ex" })
 vim.keymap.set("n", "<leader>J", "<cmd>JJ ", { desc = "JJ command" })
 vim.keymap.set("n", "<leader>e", function()
-	local path = vim.fn.expand("%:p:h")
-	if path == "" then
-		path = vim.uv.cwd() or "."
-	end
-
-	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(path) .. "/", "n")
+	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(get_cwd()) .. "/", "n")
 end, { desc = "Find file from current buffer directory" })
 vim.keymap.set({ "n", "i", "v", "s", "c" }, "<D-g>", "<Esc><Esc>", { silent = true })
 
@@ -58,38 +75,11 @@ vim.keymap.set({ "n", "x", "o" }, "S", function()
 	require("flash").treesitter()
 end, { desc = "Flash treesitter" })
 
--- Helper functions (Kept untouched because your use of vim.fs and 
--- vim.fn.getregion is flawless code)
-local function get_cwd()
-	if vim.bo.filetype == "netrw" and vim.b.netrw_curdir then
-		return vim.b.netrw_curdir
-	end
-	local bufname = vim.api.nvim_buf_get_name(0)
-	if bufname ~= "" then
-		return vim.fn.fnamemodify(bufname, ":h")
-	end
-	return vim.uv.cwd()
-end
-
-local function get_root()
-	local start_path = get_cwd() or vim.uv.cwd()
-	local git_root = vim.fs.find(".git", {
-		path = start_path,
-		upward = true,
-		type = "directory",
-	})[1]
-	if git_root then
-		return vim.fs.dirname(git_root)
-	end
-	return start_path
-end
-
 local function get_visual_selection()
 	local mode = vim.fn.mode()
 	if mode ~= "v" and mode ~= "V" and mode ~= "\22" then
 		return nil
 	end
-	-- Perfect use of vim.fn.getregion!
 	local ok, lines = pcall(vim.fn.getregion, vim.fn.getpos("v"), vim.fn.getpos("."), { type = mode })
 	if not ok or #lines == 0 then
 		return nil
@@ -139,11 +129,12 @@ local function jump_to_drupal_import_definition()
 	local parts = vim.split(tail, "\\", { plain = true, trimempty = true })
 	if #parts >= 2 then
 		local module = parts[1]
-		local remainder = table.concat(parts, "/", 2)
-		table.insert(candidates, vim.fs.joinpath(root, "docroot", "core", "modules", module, "src", remainder .. ".php"))
-		table.insert(candidates, vim.fs.joinpath(root, "docroot", "modules", "custom", module, "src", remainder .. ".php"))
-		table.insert(candidates, vim.fs.joinpath(root, "docroot", "modules", "contrib", module, "src", remainder .. ".php"))
-		table.insert(candidates, vim.fs.joinpath(root, "docroot", "modules", module, "src", remainder .. ".php"))
+		local remainder = table.concat(parts, "/", 2) .. ".php"
+		-- Module namespaces map to <module dir>/src/<remainder>; try each place
+		-- a module can live, most specific first.
+		for _, base in ipairs({ "core/modules", "modules/custom", "modules/contrib", "modules" }) do
+			candidates[#candidates + 1] = vim.fs.joinpath(root, "docroot", base, module, "src", remainder)
+		end
 	end
 
 	for _, path in ipairs(candidates) do
@@ -209,8 +200,8 @@ vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover documentation" })
 vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename symbol" })
 vim.keymap.set({ "n", "v" }, "<leader>a", vim.lsp.buf.code_action, { desc = "Code action" })
 vim.keymap.set("n", "<leader>li", function()
-	vim.cmd("checkhealth vim.lsp")
+	vim.cmd.checkhealth("vim.lsp")
 end, { desc = "LSP health" })
-vim.keymap.set("n", "<leader>lf", function()
-	vim.cmd("checkhealth fzf_lua")
+vim.keymap.set("n", "<leader>lh", function()
+	vim.cmd.checkhealth("fzf_lua")
 end, { desc = "Fzf-lua health" })

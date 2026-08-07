@@ -1,9 +1,11 @@
 -- A highly efficient, zero-autocmd way to clear hlsearch
+local search_keys = { ["<CR>"] = true, n = true, N = true, ["*"] = true, ["#"] = true, ["?"] = true, ["/"] = true }
+
 vim.on_key(function(char)
 	if vim.fn.mode() == "n" then
-		local new_hlsearch = vim.tbl_contains({ "<CR>", "n", "N", "*", "#", "?", "/" }, vim.fn.keytrans(char))
-		if vim.opt.hlsearch:get() ~= new_hlsearch then
-			vim.opt.hlsearch = new_hlsearch
+		local new_hlsearch = search_keys[vim.fn.keytrans(char)] or false
+		if vim.o.hlsearch ~= new_hlsearch then
+			vim.o.hlsearch = new_hlsearch
 		end
 	end
 end, vim.api.nvim_create_namespace("auto-hlsearch"))
@@ -11,11 +13,9 @@ end, vim.api.nvim_create_namespace("auto-hlsearch"))
 vim.api.nvim_create_autocmd("BufReadPost", {
 	group = vim.api.nvim_create_augroup("resume-last-edit-position", { clear = true }),
 	callback = function()
-		local mark = vim.api.nvim_buf_get_mark(0, '"')
-		local line = mark[1]
-		local col = mark[2]
+		local line, col = unpack(vim.api.nvim_buf_get_mark(0, '"'))
 		if line > 0 and line <= vim.api.nvim_buf_line_count(0) then
-			-- Use pcall to prevent errors if the column is out of bounds
+			-- pcall guards against the saved column being past end-of-line
 			pcall(vim.api.nvim_win_set_cursor, 0, { line, col })
 		end
 	end,

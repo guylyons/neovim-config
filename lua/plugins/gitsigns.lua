@@ -3,12 +3,6 @@ if not ok then
 	return
 end
 
-vim.api.nvim_set_hl(0, "GitSignsAdd", { link = "GitGutterAdd" })
-vim.api.nvim_set_hl(0, "GitSignsChange", { link = "GitGutterChange" })
-vim.api.nvim_set_hl(0, "GitSignsDelete", { link = "GitGutterDelete" })
-vim.api.nvim_set_hl(0, "GitSignsTopdelete", { link = "GitGutterDelete" })
-vim.api.nvim_set_hl(0, "GitSignsChangedelete", { link = "GitGutterChangeDelete" })
-
 gitsigns.setup({
 	signs = {
 		add = { text = "▍" },
@@ -22,14 +16,18 @@ gitsigns.setup({
 	current_line_blame = false,
 	preview_config = { border = "rounded" },
 	on_attach = function(bufnr)
-		local map = function(mode, lhs, rhs, desc)
-			vim.keymap.set(mode, lhs, rhs, { buf = bufnr, desc = desc })
+		local map = function(lhs, rhs, desc)
+			vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
 		end
 
-		map("n", "]h", gitsigns.next_hunk, "Next hunk")
-		map("n", "[h", gitsigns.prev_hunk, "Previous hunk")
-		map("n", "<leader>Hp", gitsigns.preview_hunk, "Preview hunk")
-		map("n", "<leader>Hs", gitsigns.stage_hunk, "Stage hunk")
-		map("n", "<leader>Hr", gitsigns.reset_hunk, "Reset hunk")
+		map("]h", function()
+			gitsigns.nav_hunk("next")
+		end, "Next hunk")
+		map("[h", function()
+			gitsigns.nav_hunk("prev")
+		end, "Previous hunk")
+		map("<leader>Hp", gitsigns.preview_hunk, "Preview hunk")
+		map("<leader>Hs", gitsigns.stage_hunk, "Stage hunk")
+		map("<leader>Hr", gitsigns.reset_hunk, "Reset hunk")
 	end,
 })

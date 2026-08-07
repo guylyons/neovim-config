@@ -6,9 +6,7 @@
 -- "Simplicity is prerequisite for reliability." - Dennis Ritchie
 -- 2026
 
-if vim.loader and vim.loader.enable then
-	vim.loader.enable()
-end
+vim.loader.enable()
 
 require("core.options")
 require("core.autocmds")

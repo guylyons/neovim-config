@@ -1,9 +1,4 @@
-local go_filetypes = {
-	go = true,
-	gomod = true,
-	gowork = true,
-	gotmpl = true,
-}
+local go_filetypes = { "go", "gomod", "gowork", "gotmpl" }
 
 local format_group = vim.api.nvim_create_augroup("go-format-on-save", { clear = false })
 
@@ -70,7 +65,7 @@ end
 
 vim.api.nvim_create_autocmd("FileType", {
 	group = vim.api.nvim_create_augroup("go-buffer-settings", { clear = true }),
-	pattern = { "go", "gomod", "gowork", "gotmpl" },
+	pattern = go_filetypes,
 	callback = function(args)
 		vim.bo[args.buf].expandtab = false
 		vim.bo[args.buf].shiftwidth = 4
@@ -82,7 +77,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("go-lsp-format-on-save", { clear = true }),
 	callback = function(args)
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if not client or client.name ~= "gopls" or not go_filetypes[vim.bo[args.buf].filetype] then
+		if not client or client.name ~= "gopls" or not vim.tbl_contains(go_filetypes, vim.bo[args.buf].filetype) then
 			return
 		end
 

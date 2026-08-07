@@ -2,134 +2,17 @@ local function executable(command)
 	return vim.fn.executable(command) == 1
 end
 
-local function enable_when_available(server_name, commands)
-	local command_list = type(commands) == "table" and commands or { commands }
-	for _, command in ipairs(command_list) do
-		if executable(command) then
-			vim.lsp.enable(server_name)
-			return true
-		end
-	end
-
-	return false
-end
-
-local function create_lsp_compat_command(name, callback, desc)
-	if vim.fn.exists(":" .. name) == 0 then
-		vim.api.nvim_create_user_command(name, callback, { desc = desc })
-	end
-end
-
-local function sanitize_text(value)
-	local text = tostring(value)
-	text = text:gsub("[\r\n]+", " ")
-	text = text:gsub("%s+", " ")
-	return vim.trim(text)
-end
-
-local function format_list(values)
-	if type(values) ~= "table" or vim.tbl_isempty(values) then
-		return "none"
-	end
-
-	local items = {}
-	for _, value in ipairs(values) do
-		items[#items + 1] = sanitize_text(value)
-	end
-
-	return table.concat(items, ", ")
-end
-
-local function format_command(cmd)
-	if type(cmd) == "function" then
-		return "<function>"
-	end
-
-	if type(cmd) == "table" then
-		local parts = {}
-		for _, value in ipairs(cmd) do
-			parts[#parts + 1] = sanitize_text(value)
-		end
-		return table.concat(parts, " ")
-	end
-
-	return sanitize_text(cmd)
-end
-
-local function show_lsp_info()
-	local bufnr = vim.api.nvim_get_current_buf()
-	local bufname = vim.api.nvim_buf_get_name(bufnr)
-	local filename = bufname ~= "" and vim.fn.fnamemodify(bufname, ":~:.") or "[No Name]"
-	local filetype = vim.bo[bufnr].filetype
-	local clients = vim.lsp.get_clients({ bufnr = bufnr })
-	local configs = vim.lsp.get_configs()
-	local sorted_configs = {}
-	local lines = {
-		"LSP Info",
-		"",
-		("Buffer: %s"):format(sanitize_text(filename)),
-		("Filetype: %s"):format(sanitize_text(filetype ~= "" and filetype or "[none]")),
-		("Working dir: %s"):format(sanitize_text(vim.uv.cwd() or "[unknown]")),
-		"",
-		("Attached clients (%d):"):format(#clients),
-	}
-
-	if #clients == 0 then
-		lines[#lines + 1] = "  - none"
-	else
-		for _, client in ipairs(clients) do
-			lines[#lines + 1] = ("  - %s (id=%d, root=%s)"):format(
-				sanitize_text(client.name),
-				client.id,
-				sanitize_text(client.root_dir or "[none]")
-			)
-		end
-	end
-
-	for _, config in ipairs(configs) do
-		sorted_configs[#sorted_configs + 1] = config
-	end
-	table.sort(sorted_configs, function(a, b)
-		return sanitize_text(a.name) < sanitize_text(b.name)
-	end)
-
-	lines[#lines + 1] = ""
-	lines[#lines + 1] = ("Configured servers (%d):"):format(#sorted_configs)
-	for _, config in ipairs(sorted_configs) do
-		lines[#lines + 1] = ("  - %s"):format(sanitize_text(config.name or "[unnamed]"))
-		if config.filetypes then
-			lines[#lines + 1] = ("    filetypes: %s"):format(format_list(config.filetypes))
-		end
-		if config.cmd then
-			lines[#lines + 1] = ("    cmd: %s"):format(format_command(config.cmd))
-		end
-	end
-
-	vim.cmd("botright new")
-	local info_buf = vim.api.nvim_get_current_buf()
-	vim.bo[info_buf].buftype = "nofile"
-	vim.bo[info_buf].bufhidden = "wipe"
-	vim.bo[info_buf].swapfile = false
-	vim.bo[info_buf].buflisted = false
-	vim.bo[info_buf].modifiable = true
-	vim.bo[info_buf].filetype = "markdown"
-	vim.api.nvim_buf_set_lines(info_buf, 0, -1, false, lines)
-	vim.bo[info_buf].modifiable = false
-	vim.keymap.set("n", "q", "<cmd>close<cr>", {
-		buf = info_buf,
-		silent = true,
-		desc = "Close LSP info",
-	})
-end
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- Neovim deep-merges this over vim.lsp.protocol.make_client_capabilities(), so
+-- only the deltas belong here. cmp_nvim_lsp.default_capabilities() takes an
+-- options table, not a capabilities table -- do not feed it the defaults.
 local ok_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
-if ok_cmp_lsp then
-	capabilities = cmp_lsp.default_capabilities(capabilities)
-end
+local capabilities = ok_cmp_lsp and cmp_lsp.default_capabilities() or {}
 
-capabilities.workspace = capabilities.workspace or {}
-capabilities.workspace.didChangeWatchedFiles = nil
+-- Opt out of server-driven file watching; it is expensive on large trees.
+-- The merge cannot delete keys, so disable it rather than setting it to nil.
+capabilities.workspace = vim.tbl_deep_extend("force", capabilities.workspace or {}, {
+	didChangeWatchedFiles = { dynamicRegistration = false },
+})
 
 vim.lsp.config("*", {
 	capabilities = capabilities,
@@ -179,26 +62,42 @@ if executable("drupal_ls") then
 	vim.lsp.enable("drupal_ls")
 end
 
-enable_when_available("intelephense", "intelephense")
-enable_when_available("lua_ls", { "lua-language-server", "lua_ls" })
-enable_when_available("pyright", "pyright-langserver")
-enable_when_available("bashls", "bash-language-server")
-enable_when_available("cssls", "vscode-css-language-server")
-enable_when_available("html", "vscode-html-language-server")
-enable_when_available("jsonls", "vscode-json-language-server")
-enable_when_available("emmet_language_server", "emmet-language-server")
-enable_when_available("yamlls", "yaml-language-server")
-enable_when_available("gopls", "gopls")
+-- Only enable a server when its binary is on PATH, so a missing tool stays
+-- silent instead of erroring on every matching buffer.
+local servers = {
+	bashls = { "bash-language-server" },
+	cssls = { "vscode-css-language-server" },
+	emmet_language_server = { "emmet-language-server" },
+	gopls = { "gopls" },
+	html = { "vscode-html-language-server" },
+	intelephense = { "intelephense" },
+	jsonls = { "vscode-json-language-server" },
+	lua_ls = { "lua-language-server", "lua_ls" },
+	pyright = { "pyright-langserver" },
+	yamlls = { "yaml-language-server" },
+}
 
-create_lsp_compat_command("LspInfo", function()
-	vim.cmd("checkhealth vim.lsp")
-end, "Show LSP health")
+for server, commands in pairs(servers) do
+	if vim.iter(commands):any(executable) then
+		vim.lsp.enable(server)
+	end
+end
 
-create_lsp_compat_command("LspRestart", function()
+-- nvim-lspconfig no longer ships these commands; keep the familiar names.
+local function compat_command(name, desc, callback)
+	if vim.fn.exists(":" .. name) == 0 then
+		vim.api.nvim_create_user_command(name, callback, { desc = desc })
+	end
+end
+
+compat_command("LspInfo", "Show LSP health", function()
+	vim.cmd.checkhealth("vim.lsp")
+end)
+
+compat_command("LspRestart", "Restart LSP clients", function()
 	vim.cmd("lsp restart")
-end, "Restart LSP clients")
+end)
 
-create_lsp_compat_command("LspLog", function()
-	local log_path = vim.lsp.log.get_filename()
-	vim.cmd("edit " .. vim.fn.fnameescape(log_path))
-end, "Show LSP log")
+compat_command("LspLog", "Show LSP log", function()
+	vim.cmd.edit(vim.fn.fnameescape(vim.lsp.log.get_filename()))
+end)
