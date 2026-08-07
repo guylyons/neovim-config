@@ -11,7 +11,7 @@ This repository is a personal Neovim configuration for Neovim 0.12+.
 - `lua/core/codex_edit.lua`: Codex range-edit integration (`:CodexEdit`, `:CodexLine`).
 - `lua/plugins/init.lua`: plugin registration and loading through native `vim.pack`.
 - `lua/plugins/*.lua`: one file per plugin or feature area (`treesitter`, `lsp`, `format`, etc.).
-- `after/ftplugin/*` and `after/indent/*`: filetype-specific buffer and indentation overrides.
+- `after/ftplugin/*`: filetype-specific buffer and indentation overrides.
 
 There is no dedicated `tests/` directory in this repo.
 
@@ -19,14 +19,22 @@ There is no dedicated `tests/` directory in this repo.
 Use Neovim itself as the runtime and validation tool.
 
 - `nvim`: start locally and let `vim.pack` install missing plugins.
-- `:PackUpdate`: update plugins managed by `vim.pack`.
+- `:lua vim.pack.update()` (mapped to `<leader>u`): update plugins. `vim.pack` is a
+  Lua API in 0.12 -- there is no `:PackUpdate` command. Use `vim.pack.del({"name"})`
+  to remove a plugin from disk and the lockfile.
 - `:TSUpdate`: update Tree-sitter parsers.
 - `:checkhealth`: verify runtime dependencies (Node, LSP tools, providers).
-- `nvim --headless -u NONE "+lua assert(loadfile('init.lua')); print('ok')" +qa`: quick Lua parse smoke check.
+- Startup smoke check -- loads the real config against a real file, so it catches
+  runtime errors that a parse-only check misses:
+
+      nvim --headless "+edit foo.ts" "+sleep 500m" \
+        "+lua vim.print(#vim.lsp.get_clients({bufnr=0}))" +qa
 
 ## Coding Style & Naming Conventions
 - Language: Lua.
-- Indentation: 2 spaces (`expandtab`, `shiftwidth=2`, `tabstop=2`).
+- Indentation in this repo's own Lua files: tabs (stylua default). The 2-space
+  `expandtab`/`shiftwidth`/`tabstop` settings in `lua/core/options.lua` are the
+  editing defaults for *other* projects, not the style used here.
 - Prefer small, focused modules under `lua/plugins/` with descriptive lowercase names (for example, `treesitter.lua`, `lualine.lua`).
 - Keep comments brief and only where behavior is non-obvious.
 - Formatting: use `stylua` for Lua changes when available.

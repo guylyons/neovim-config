@@ -27,14 +27,9 @@ end
 -- 'noremap = true' is dropped entirely because it's the default
 vim.keymap.set("i", "jj", "<Esc>", { silent = true })
 
-local ok_undotree, undotree = pcall(function()
-	vim.cmd.packadd("nvim.undotree")
-	return require("undotree")
-end)
-
-if ok_undotree then
-	vim.keymap.set("n", "<leader>t", undotree.open, { desc = "Open undo tree" })
-end
+-- nvim.undotree ships with Neovim 0.12 as an opt-in runtime plugin.
+vim.cmd.packadd("nvim.undotree")
+vim.keymap.set("n", "<leader>t", require("undotree").open, { desc = "Open undo tree" })
 
 -- Using <cmd> instead of ':' prevents UI flicker
 vim.keymap.set("n", "<leader><CR>", "<cmd>w<CR>", { silent = true, desc = "Write buffer" })
