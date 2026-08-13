@@ -1,6 +1,13 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Keep netrw listings cached so re-entering a directory keeps the cursor where
+-- it was. The cost is that files created outside vim don't appear until the
+-- listing is refreshed with <C-l>.
+vim.g.netrw_fastbrowse = 2
+-- <C-^> returns to the last edited file rather than the netrw listing.
+vim.g.netrw_altfile = 1
+
 vim.opt.wrap = false
 vim.opt.termguicolors = true
 

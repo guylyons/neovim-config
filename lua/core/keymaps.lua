@@ -54,7 +54,26 @@ vim.keymap.set("n", "<leader>u", function()
 end, { silent = true, desc = "Update plugins" })
 
 vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
-vim.keymap.set("n", "<leader>j", "<cmd>Ex <CR> ", { desc = "Ex" })
+-- Open netrw for the current file's directory. When this window is returning to
+-- the listing it came from, :Rexplore restores the cursor onto the file that was
+-- opened; :Explore rebuilds the listing and puts the cursor at the top instead.
+-- In a netrw buffer `-` never reaches this: netrw's own buffer-local `-` (up a
+-- directory) takes precedence over a global mapping.
+local function explore()
+	-- Already listing: :Explore here opens the entry under the cursor, so stay put.
+	if vim.bo.filetype == "netrw" then
+		return
+	end
+	local rexdir = vim.w.netrw_rexdir
+	if rexdir and vim.fn.fnamemodify(rexdir, ":p:h") == vim.fn.expand("%:p:h") then
+		vim.cmd.Rexplore()
+	else
+		vim.cmd.Explore()
+	end
+end
+
+vim.keymap.set("n", "-", explore, { desc = "Explore current directory" })
+vim.keymap.set("n", "<leader>j", explore, { desc = "Explore current directory" })
 vim.keymap.set("n", "<leader>J", "<cmd>JJ ", { desc = "JJ command" })
 vim.keymap.set("n", "<leader>e", function()
 	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(get_cwd()) .. "/", "n")
