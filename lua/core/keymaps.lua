@@ -54,21 +54,41 @@ vim.keymap.set("n", "<leader>u", function()
 end, { silent = true, desc = "Update plugins" })
 
 vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
--- Open netrw for the current file's directory. When this window is returning to
--- the listing it came from, :Rexplore restores the cursor onto the file that was
--- opened; :Explore rebuilds the listing and puts the cursor at the top instead.
--- In a netrw buffer `-` never reaches this: netrw's own buffer-local `-` (up a
--- directory) takes precedence over a global mapping.
+-- Put the cursor on `name` in the netrw listing. The anchored pattern covers the
+-- thin and long liststyles (name at line start, then a decoration, whitespace or
+-- end of line); the loose search is the fallback for the wide and tree styles,
+-- where names are indented or padded into columns.
+local function netrw_cursor_to(name)
+	local entry = vim.fn.escape(name, "\\/.*$^~[]")
+	if vim.fn.search("^" .. entry .. "[/*@=|]\\=\\($\\|\\s\\)", "cw") == 0 then
+		vim.fn.search(entry, "cw")
+	end
+end
+
+-- Open netrw for the current file's directory, cursor on the file just left.
+-- :Rexplore restores that position itself when the window is returning to the
+-- listing it came from; :Explore rebuilds the listing with the cursor at the top,
+-- so the position has to be re-found. In a netrw buffer `-` never reaches this:
+-- netrw's own buffer-local `-` (up a directory) takes precedence over a global
+-- mapping.
 local function explore()
 	-- Already listing: :Explore here opens the entry under the cursor, so stay put.
 	if vim.bo.filetype == "netrw" then
 		return
 	end
+
+	local dir, name = vim.fn.expand("%:p:h"), vim.fn.expand("%:t")
 	local rexdir = vim.w.netrw_rexdir
-	if rexdir and vim.fn.fnamemodify(rexdir, ":p:h") == vim.fn.expand("%:p:h") then
+	if rexdir and vim.fn.fnamemodify(rexdir, ":p:h") == dir then
 		vim.cmd.Rexplore()
 	else
 		vim.cmd.Explore()
+	end
+
+	-- Unnamed buffers, and listings that ended up somewhere else, have nothing to
+	-- aim at. b:netrw_curdir has no trailing slash except at the filesystem root.
+	if name ~= "" and vim.bo.filetype == "netrw" and vim.fn.fnamemodify(vim.b.netrw_curdir or "", ":p:h") == dir then
+		netrw_cursor_to(name)
 	end
 end
 
