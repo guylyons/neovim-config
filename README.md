@@ -143,4 +143,7 @@ FZF mappings include project files, git files, live grep, buffer lines, diagnost
 - This config uses native `vim.lsp.enable()` instead of older `require("lspconfig").setup()` patterns.
 - Neovim 0.12's `:lsp` command is the canonical interface for starting, stopping, and restarting LSP clients.
 - Missing external executables are skipped instead of causing startup errors.
-- PHP indentation is deliberately conservative in [after/ftplugin/php.lua](after/ftplugin/php.lua).
+- Enabling Tree-sitter highlighting turns `'syntax'` off, which breaks every runtime indent script
+  that calls `synID()` (php, html, css, javascript, lua, sh, ruby, vim). The fold autocmd in
+  [lua/core/autocmds.lua](lua/core/autocmds.lua) reloads the regex syntax alongside Tree-sitter so
+  those scripts keep working.

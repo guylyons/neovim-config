@@ -30,6 +30,14 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 
 		-- If treesitter can attach (or is already attached by a plugin), use it
 		if pcall(vim.treesitter.start, args.buf) then
+			-- vim.treesitter.start() turns 'syntax' off, but many runtime indent
+			-- scripts -- php, html, css, javascript, lua, sh, ruby, vim -- call
+			-- synID() to tell code from strings, comments and heredocs. With no
+			-- syntax loaded synID() returns 0 and those scripts silently indent
+			-- wrongly (PHP leaves closing braces at column 0). Load the regex
+			-- syntax alongside; treesitter highlights still draw on top of it.
+			vim.bo[args.buf].syntax = vim.bo[args.buf].filetype
+
 			-- Use vim.opt_local to safely set options for the current window/buffer
 			vim.opt_local.foldmethod = "expr"
 			vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
