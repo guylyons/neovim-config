@@ -11,6 +11,15 @@ vim.g.netrw_altfile = 1
 vim.opt.wrap = false
 vim.opt.termguicolors = true
 
+-- Default border for every floating window that does not set one itself:
+-- LSP hover/signature help, diagnostic floats, and the gitsigns hunk preview
+-- all pick this up, so the style lives here rather than in each plugin module.
+vim.opt.winborder = "rounded"
+
+-- Persist undo history across sessions. Without this the <leader>t undo tree
+-- only ever shows edits made since the buffer was opened.
+vim.opt.undofile = true
+
 -- Never show the tabline. Neogit and diffview open in their own tabpages, which
 -- would otherwise pop a "[Scratch]" tab bar above the window.
 vim.opt.showtabline = 0

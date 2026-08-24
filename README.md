@@ -36,9 +36,11 @@ LSP servers are enabled only when their executable is available on `PATH`.
 - YAML: `yaml-language-server`
 - Emmet: `emmet-language-server`
 - Go: `gopls`
-- TypeScript/JavaScript: `typescript-tools.nvim`
+- TypeScript/JavaScript: `tsgo` (the native TypeScript 7 language server)
 
-TypeScript support intentionally uses `pmizio/typescript-tools.nvim` rather than `ts_ls`. Mason is configured with `automatic_enable = false`, so native LSP enablement remains explicit in [lua/plugins/lsp.lua](lua/plugins/lsp.lua).
+TypeScript uses the native (Go) server that ships with TypeScript 7, exposed as `tsgo` by `@typescript/native-preview` and as `tsc` by the `typescript` package. [lua/plugins/typescript.lua](lua/plugins/typescript.lua) inherits the `tsgo` config from `nvim-lspconfig` and only overrides how the binary is resolved -- a project-local `node_modules/.bin/tsgo` wins, then a project-local `tsc` from TypeScript 7 or newer, then a global one. Inlay hints are enabled on attach.
+
+Mason is configured with `automatic_enable = false`, so native LSP enablement remains explicit in [lua/plugins/lsp.lua](lua/plugins/lsp.lua).
 
 ## Formatting
 
@@ -91,18 +93,23 @@ Core mappings live in [lua/core/keymaps.lua](lua/core/keymaps.lua).
 - `<leader>Q` / `<leader>;`: quit all
 - `<leader>O`: open containing folder
 - `<leader>u`: run `vim.pack.update()`
+- `<leader>t`: open the undo tree (`nvim.undotree`); history persists across sessions
+- `-` / `<leader>j`: open netrw for the current file's directory, cursor on the file just left
 - `<leader>m`: open Neogit
 - `<leader>J`: open Jujutsu log
 - `<leader>w`: pick a window
 - `<leader>s`: Flash jump
 - `S`: Flash Tree-sitter jump
 - `gd`: go to definition, with a Drupal import shortcut for PHP `use Drupal\...` lines
-- `gr`, `gi`, `gt`: LSP references, implementations, and type definitions through `fzf-lua`
+- `grr`, `gri`, `grt`: LSP references, implementations, and type definitions through `fzf-lua`.
+  These override Neovim's built-in `gr*` maps in place, so `gi` (insert at last insert position)
+  and `gt` (next tabpage) keep their default meanings.
 - `K`: hover documentation
 - `<leader>rn`: rename symbol
 - `<leader>a`: code action
 - `<leader>li`: LSP health
-- `<leader>lf`: fzf-lua health
+- `<leader>lh`: fzf-lua health
+- `<leader>lf`: format the current buffer (same as `:Format`)
 - `:Format`: format the current buffer through an attached LSP client
 
 FZF mappings include project files, git files, live grep, buffer lines, diagnostics, symbols, registers, help tags, and recent files.
@@ -114,10 +121,10 @@ FZF mappings include project files, git files, live grep, buffer lines, diagnost
 - [lua/core/autocmds.lua](lua/core/autocmds.lua): search, cursor restore, and folding autocommands
 - [lua/core/diagnostics.lua](lua/core/diagnostics.lua): diagnostic display settings
 - [lua/core/keymaps.lua](lua/core/keymaps.lua): keymaps and navigation helpers
+- [lua/core/codex_edit.lua](lua/core/codex_edit.lua): Codex range-edit integration (`:CodexEdit`, `:CodexLine`)
 - [lua/plugins/init.lua](lua/plugins/init.lua): `vim.pack` plugin registration and plugin module loading
 - [lua/plugins](lua/plugins): plugin-specific setup modules
 - [after/ftplugin](after/ftplugin): filetype-specific buffer settings
-- [after/indent](after/indent): indentation overrides
 
 ## Maintenance
 
@@ -129,7 +136,11 @@ FZF mappings include project files, git files, live grep, buffer lines, diagnost
 
 ## Notes
 
+- `'winborder'` is set to `rounded` in [lua/core/options.lua](lua/core/options.lua), so LSP hover,
+  diagnostic floats, and the gitsigns hunk preview all pick up the same border without each module
+  configuring one.
+- `'undofile'` is enabled; undo history is written to `stdpath('state')/undo`.
 - This config uses native `vim.lsp.enable()` instead of older `require("lspconfig").setup()` patterns.
 - Neovim 0.12's `:lsp` command is the canonical interface for starting, stopping, and restarting LSP clients.
 - Missing external executables are skipped instead of causing startup errors.
-- PHP indentation is deliberately conservative in [after/ftplugin/php.lua](after/ftplugin/php.lua) and [after/indent/php.lua](after/indent/php.lua).
+- PHP indentation is deliberately conservative in [after/ftplugin/php.lua](after/ftplugin/php.lua).

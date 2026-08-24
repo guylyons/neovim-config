@@ -222,9 +222,15 @@ if ok_fzf then
 	vim.keymap.set("n", "<leader>S", fzf.git_status, { desc = "Fzf git status" })
 	vim.keymap.set("n", "<leader>h", fzf.help_tags, { desc = "Fzf help tags" })
 	vim.keymap.set("n", "<leader>v", fzf.registers, { desc = "Fzf registers" })
-	vim.keymap.set("n", "gr", fzf.lsp_references, { desc = "Go to references" })
-	vim.keymap.set("n", "gi", fzf.lsp_implementations, { desc = "Go to implementations" })
-	vim.keymap.set("n", "gt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
+	-- Override Neovim's built-in LSP maps in place rather than adding new ones.
+	-- A bare `gr` would stall for the whole 'timeoutlen' on every press because
+	-- the built-in grn/gra/grr/gri/grt/grx maps share the prefix, and `gi` and
+	-- `gt` are already taken by "insert at last insert position" and "next
+	-- tabpage" -- the latter matters here because Neogit and diffview open in
+	-- their own tabpages.
+	vim.keymap.set("n", "grr", fzf.lsp_references, { desc = "Go to references" })
+	vim.keymap.set("n", "gri", fzf.lsp_implementations, { desc = "Go to implementations" })
+	vim.keymap.set("n", "grt", fzf.lsp_typedefs, { desc = "Go to type definitions" })
 	vim.keymap.set("n", "<leader>ls", fzf.lsp_document_symbols, { desc = "LSP document symbols" })
 	vim.keymap.set("n", "<leader>lS", fzf.lsp_workspace_symbols, { desc = "LSP workspace symbols" })
 end

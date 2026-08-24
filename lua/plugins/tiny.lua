@@ -1,3 +1,5 @@
+-- Renders diagnostics as inline virtual text. Neovim's own virtual_text is
+-- turned off in core/diagnostics.lua so the two do not draw over each other.
 require("tiny-inline-diagnostic").setup({
 	preset = "modern",
 	options = {
@@ -6,8 +8,4 @@ require("tiny-inline-diagnostic").setup({
 			if_many = true,
 		},
 	},
-})
-
-vim.diagnostic.config({
-	virtual_text = false,
 })

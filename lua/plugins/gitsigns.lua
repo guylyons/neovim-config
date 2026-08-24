@@ -11,7 +11,6 @@ gitsigns.setup({
 	numhl = true,
 	linehl = false,
 	current_line_blame = false,
-	preview_config = { border = "rounded" },
 	on_attach = function(bufnr)
 		local map = function(lhs, rhs, desc)
 			vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })

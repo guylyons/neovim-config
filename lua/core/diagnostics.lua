@@ -1,14 +1,16 @@
--- Baseline diagnostic display. plugins/tiny.lua replaces virtual_text with
--- tiny-inline-diagnostic when that plugin loads; the setting below is the
--- fallback for when it does not.
+-- The single vim.diagnostic.config() call site.
+--
+-- tiny-inline-diagnostic renders diagnostics as virtual text itself, so
+-- Neovim's own virtual_text stays off; plugins/tiny.lua only sets the plugin
+-- up. If that plugin ever fails to load, plugins/init.lua reports it and
+-- diagnostics fall back to signs and underline.
+--
+-- Float borders come from 'winborder' in core/options.lua.
 vim.diagnostic.config({
 	severity_sort = true,
 	update_in_insert = false,
-	virtual_text = {
-		source = "if_many",
-	},
+	virtual_text = false,
 	float = {
-		border = "rounded",
 		source = "if_many",
 	},
 })
