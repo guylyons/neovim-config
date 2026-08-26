@@ -42,7 +42,6 @@ local plugin_modules = {
 	"plugins.jujutsu",
 	"plugins.neogit",
 	"plugins.nvim-window-picker",
-	"plugins.completion",
 	"plugins.lsp",
 	"plugins.typescript",
 	"plugins.whichkey",
@@ -51,7 +50,7 @@ local plugin_modules = {
 
 -- Each module is isolated: one failing plugin reports itself and the rest still
 -- load, so the modules themselves do not need their own pcall guards.
-for _, module_name in ipairs(plugin_modules) do
+local function load_module(module_name)
 	local ok, err = pcall(require, module_name)
 	if not ok then
 		-- Lua appends the whole package.path to "module not found"; keep line one.
@@ -61,3 +60,20 @@ for _, module_name in ipairs(plugin_modules) do
 		end)
 	end
 end
+
+for _, module_name in ipairs(plugin_modules) do
+	load_module(module_name)
+end
+
+-- nvim-cmp and LuaSnip are only needed once you start typing, so keep them off the
+-- startup path and load them on the first insert. cmp activates from the first
+-- typed character (it drives completion off TextChangedI), so nothing is missed.
+-- LSP capabilities do not depend on this -- lsp.lua pulls in cmp_nvim_lsp on its
+-- own, which is separate from and much cheaper than loading nvim-cmp itself.
+vim.api.nvim_create_autocmd("InsertEnter", {
+	once = true,
+	group = vim.api.nvim_create_augroup("defer-completion", { clear = true }),
+	callback = function()
+		load_module("plugins.completion")
+	end,
+})

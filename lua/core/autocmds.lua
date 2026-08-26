@@ -21,15 +21,22 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
-	group = vim.api.nvim_create_augroup("configure-code-folding", { clear = true }),
+local fold_group = vim.api.nvim_create_augroup("configure-code-folding", { clear = true })
+
+-- Per-buffer work, once: attaching treesitter and loading the regex syntax are
+-- buffer-scoped, so they belong on FileType (fires once when the filetype is set)
+-- rather than BufWinEnter (fires on every window/tab switch, re-sourcing syntax).
+vim.api.nvim_create_autocmd("FileType", {
+	group = fold_group,
 	callback = function(args)
 		if vim.bo[args.buf].buftype ~= "" then
 			return
 		end
 
-		-- If treesitter can attach (or is already attached by a plugin), use it
+		-- If treesitter can attach (or is already attached by a plugin), use it.
 		if pcall(vim.treesitter.start, args.buf) then
+			vim.b[args.buf].ts_folds = true
+
 			-- vim.treesitter.start() turns 'syntax' off, but many runtime indent
 			-- scripts -- php, html, css, javascript, lua, sh, ruby, vim -- call
 			-- synID() to tell code from strings, comments and heredocs. With no
@@ -37,12 +44,25 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "FileType" }, {
 			-- wrongly (PHP leaves closing braces at column 0). Load the regex
 			-- syntax alongside; treesitter highlights still draw on top of it.
 			vim.bo[args.buf].syntax = vim.bo[args.buf].filetype
+		else
+			vim.b[args.buf].ts_folds = false
+		end
+	end,
+})
 
-			-- Use vim.opt_local to safely set options for the current window/buffer
+-- Fold options are window-local, so re-apply them whenever the buffer is shown in
+-- a window. This is cheap and idempotent -- no syntax re-sourcing on window switch.
+vim.api.nvim_create_autocmd("BufWinEnter", {
+	group = fold_group,
+	callback = function(args)
+		if vim.bo[args.buf].buftype ~= "" then
+			return
+		end
+
+		if vim.b[args.buf].ts_folds then
 			vim.opt_local.foldmethod = "expr"
 			vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		else
-			-- Fallback
 			vim.opt_local.foldmethod = "indent"
 			vim.opt_local.foldexpr = "0"
 		end
