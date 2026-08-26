@@ -288,8 +288,8 @@ local function start_spinner(bufnr, start_mark)
 			vim.api.nvim_buf_set_extmark(bufnr, namespace, pos[1], pos[2], {
 				id = start_mark,
 				right_gravity = false,
-				virt_text = { { spinner_frames[spinner.frame] .. " Working...", "Comment" } },
-				virt_text_pos = "inline",
+				virt_lines = { { { spinner_frames[spinner.frame] .. " Working...", "Comment" } } },
+				virt_lines_above = true,
 			})
 
 			spinner.frame = (spinner.frame % #spinner_frames) + 1
