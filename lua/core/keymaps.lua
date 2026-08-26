@@ -53,6 +53,26 @@ vim.keymap.set("n", "<leader>u", function()
 	vim.pack.update()
 end, { silent = true, desc = "Update plugins" })
 
+-- Prompt for an instruction, then ask Claude to rewrite the line (normal) or the
+-- selection (visual) in place.
+local function ai_edit(command)
+	vim.ui.input({ prompt = "AI edit: " }, function(instruction)
+		if instruction and vim.trim(instruction) ~= "" then
+			vim.cmd(command .. " " .. instruction)
+		end
+	end)
+end
+
+vim.keymap.set("n", "<leader>i", function()
+	ai_edit("AiLine")
+end, { desc = "AI edit current line" })
+
+-- Leave visual mode first so '< and '> mark the selection before :AiEdit reads them.
+vim.keymap.set("x", "<leader>i", function()
+	vim.cmd("normal! \27")
+	ai_edit("'<,'>AiEdit")
+end, { desc = "AI edit selection" })
+
 vim.keymap.set("n", "<leader>m", "<cmd>Neogit<CR>", { desc = "Neogit status" })
 -- Put the cursor on `name` in the netrw listing. The anchored pattern covers the
 -- thin and long liststyles (name at line start, then a decoration, whitespace or
