@@ -23,17 +23,31 @@ local function strip_code_fence(text)
 	return fenced or text
 end
 
----Normalize replacement text into lines suitable for buffer APIs.
----@param text string
----@return string[]
-local function replacement_lines(text)
-	text = strip_code_fence(text:gsub("\r\n", "\n"):gsub("\r", "\n"))
+-- The model must wrap its replacement between these marker lines. Extracting only
+-- the delimited block means any stray prose the model emits is discarded instead of
+-- being written into the buffer, and a reply with no block is rejected outright.
+local REPLACEMENT_OPEN = "<<<AI_REPLACEMENT"
+local REPLACEMENT_CLOSE = ">>>AI_REPLACEMENT"
 
-	if text:sub(-1) == "\n" then
-		text = text:sub(1, -2)
+---Extract the replacement lines from a model reply.
+---@param raw string
+---@return string[]? lines Replacement lines, an empty table to delete the range, or nil when no block was found.
+function M.parse_response(raw)
+	raw = (raw or ""):gsub("\r\n", "\n"):gsub("\r", "\n")
+
+	local body = raw:match(REPLACEMENT_OPEN .. "[ \t]*\n(.-)" .. REPLACEMENT_CLOSE)
+	if not body then
+		return nil
 	end
 
-	return vim.split(text, "\n", { plain = true })
+	body = body:gsub("\n$", "")
+	body = strip_code_fence(body)
+
+	if body == "" then
+		return {}
+	end
+
+	return vim.split(body, "\n", { plain = true })
 end
 
 ---Collect lightweight buffer context that helps the model preserve local style.
@@ -58,14 +72,14 @@ local function edit_prompt(instruction, selected_text)
 	local context = current_context()
 
 	return table.concat({
-		"You are editing a Neovim buffer range.",
-		"Return only the replacement text for the provided range.",
-		"Do not use Markdown fences.",
-		"Do not explain the change.",
-		"Do not include surrounding unchanged file content unless it is part of the replacement range.",
+		"You are editing a Neovim buffer range. Apply the instruction to the selected text.",
+		("Output the replacement text wrapped exactly between a line containing only %s and a line containing only %s.")
+			:format(REPLACEMENT_OPEN, REPLACEMENT_CLOSE),
+		"Put nothing outside those two marker lines. Do not use Markdown fences inside them.",
 		"Make the smallest change that satisfies the instruction.",
 		"Preserve indentation, style, and line endings implied by the selected text.",
-		"If the correct edit deletes the whole range, return exactly: AI_DELETE_RANGE",
+		"Do not include surrounding unchanged file content unless it is part of the replacement range.",
+		"If the correct edit removes the range entirely, output the two markers with nothing between them.",
 		"",
 		("File: %s"):format(context.path),
 		("Filetype: %s"):format(context.filetype),
@@ -285,19 +299,14 @@ end
 ---@param edit_range table
 ---@param start_mark integer
 ---@param end_mark integer
----@param text string
-local function apply_replacement(bufnr, edit_range, start_mark, end_mark, text)
+---@param lines string[] Replacement lines; an empty table deletes the range.
+local function apply_replacement(bufnr, edit_range, start_mark, end_mark, lines)
 	local start_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, start_mark, {})
 	local end_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, namespace, end_mark, {})
 
 	if #start_pos == 0 or #end_pos == 0 then
 		notify("Could not find the original edit range.", vim.log.levels.ERROR)
 		return
-	end
-
-	local lines = replacement_lines(text)
-	if vim.trim(text) == "AI_DELETE_RANGE" then
-		lines = {}
 	end
 
 	if edit_range.kind == "text" then
@@ -363,14 +372,15 @@ function M.edit(opts)
 				return
 			end
 
-			if vim.trim(output) == "" then
+			local lines = M.parse_response(output)
+			if not lines then
 				stop_spinner(spinner)
-				notify("Claude returned an empty replacement.", vim.log.levels.ERROR)
+				notify("Claude did not return a wrapped replacement; buffer left unchanged.", vim.log.levels.ERROR)
 				return
 			end
 
 			stop_spinner(spinner, true)
-			apply_replacement(bufnr, edit_range, start_mark, end_mark, output)
+			apply_replacement(bufnr, edit_range, start_mark, end_mark, lines)
 		end)
 	end)
 end
