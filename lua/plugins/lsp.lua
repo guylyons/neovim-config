@@ -89,9 +89,38 @@ vim.lsp.config("emmet_language_server", {
 		"eruby",
 		"html",
 		"less",
+		"php",
 		"sass",
 		"scss",
 		"twig",
+	},
+})
+
+-- The bulk of a Drupal .php template is HTML, but only intelephense attaches to
+-- a php buffer, so the embedded markup gets no tag/attribute completion. Attach
+-- the HTML server there too (emmet_language_server above covers abbreviations).
+--
+-- vscode-html-language-server treats the whole buffer as HTML, so it flags every
+-- <?php ... ?> as a stray tag. Drop its diagnostics for php buffers only -- real
+-- .html files still get them -- and keep just the completion.
+local default_publish_diagnostics = vim.lsp.handlers["textDocument/publishDiagnostics"]
+vim.lsp.config("html", {
+	filetypes = { "html", "php" },
+	-- The server only serves completion for documents it is told are HTML, so a
+	-- php buffer announced with its own languageId gets nothing. Announce html.
+	get_language_id = function()
+		return "html"
+	end,
+	handlers = {
+		["textDocument/publishDiagnostics"] = function(err, result, ctx)
+			if result and result.uri then
+				local bufnr = vim.uri_to_bufnr(result.uri)
+				if vim.bo[bufnr].filetype == "php" then
+					return
+				end
+			end
+			return default_publish_diagnostics(err, result, ctx)
+		end,
 	},
 })
 
