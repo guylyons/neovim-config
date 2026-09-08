@@ -1,8 +1,7 @@
--- Guy Lyons
+-- Guy Lyons's personal Neovim configuration (requires 0.12+).
 --
--- Personal Neovim 0.12+ configuration repository.
--- Loads editor settings, native vim.pack plugins, keymaps, completion,
--- LSP, formatting, Tree-sitter, and other feature modules from lua/.
+-- Bootstraps editor options and loads feature modules from lua/: native
+-- vim.pack plugins, keymaps, completion, LSP, formatting, and Tree-sitter.
 --
 -- "Debugging is twice as hard as writing the code in the first place." - Brian Kernighan
 --
@@ -10,13 +9,15 @@
 
 vim.loader.enable()
 
-require("core.options") -- editor behavior: line numbers, indentation, search, clipboard, and other vim.opt settings
-require("core.autocmds") -- event-driven hooks that run automatically (e.g. highlight on yank, trim whitespace on save)
-require("core.diagnostics") -- how LSP errors/warnings appear: signs, virtual text, underlines, and float windows
+-- Core editor configuration
+require("core.options") -- vim.opt settings: numbers, indentation, search, clipboard
+require("core.autocmds") -- event hooks: highlight on yank, trim trailing whitespace
+require("core.diagnostics") -- diagnostic display: signs, virtual text, underlines, floats
 
 -- AI-assisted inline edit commands
 require("core.codex_edit").setup()
 require("core.ai_edit").setup()
 
-require("plugins") -- load and configure all plugins
-require("core.keymaps") -- register custom key mappings
+-- Plugins and mappings
+require("plugins") -- load and configure plugins
+require("core.keymaps") -- custom key mappings
