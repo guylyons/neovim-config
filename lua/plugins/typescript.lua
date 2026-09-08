@@ -20,8 +20,10 @@ local function ts_major(root_dir)
 end
 
 -- Prefer a project-local server, then a global one. `tsgo` is unambiguous;
--- `tsc` only speaks LSP from TypeScript 7 onwards, so gate the local one on
--- the installed major version.
+-- `tsc` only speaks LSP from TypeScript 7 onwards, so gate every `tsc` on the
+-- installed major version. Returns nil when no LSP-capable binary is reachable
+-- -- root_dir below relies on that to skip attaching (rather than spawning a
+-- missing command and erroring on every JS/TS buffer).
 local function resolve_cmd(root_dir)
 	local local_tsgo = root_dir and (root_dir .. "/node_modules/.bin/tsgo")
 	if local_tsgo and vim.fn.executable(local_tsgo) == 1 then
@@ -40,8 +42,14 @@ local function resolve_cmd(root_dir)
 		return "tsgo"
 	end
 
-	return "tsc"
+	return nil
 end
+
+-- The bundled lsp/tsgo.lua ships a Deno-aware root_dir; reuse it rather than
+-- reimplementing that logic, and only wrap it to withhold attachment when the
+-- resolved project has no LSP-capable TypeScript. Not calling on_dir is the one
+-- clean way to abort a start in 0.12 -- a cmd() returning nil throws.
+local bundled_tsgo = dofile(vim.api.nvim_get_runtime_file("lsp/tsgo.lua", false)[1])
 
 -- tsgo namespaces identical settings under `typescript` and `javascript`.
 local function language_settings(extra_preferences)
@@ -77,15 +85,23 @@ vim.lsp.config("tsgo", {
 		local root_dir = (config or {}).root_dir
 		return vim.lsp.rpc.start({ resolve_cmd(root_dir), "--lsp", "--stdio" }, dispatchers)
 	end,
+	root_dir = function(bufnr, on_dir)
+		bundled_tsgo.root_dir(bufnr, function(dir)
+			if resolve_cmd(dir) then
+				on_dir(dir)
+			end
+		end)
+	end,
 	settings = {
 		typescript = language_settings({ includePackageJsonAutoImports = "auto" }),
 		javascript = language_settings(),
 	},
 })
 
-if vim.fn.executable("tsgo") == 1 or vim.fn.executable("tsc") == 1 then
-	vim.lsp.enable("tsgo")
-end
+-- Always register the server: the root_dir wrapper above decides per project
+-- whether a usable binary exists, so a project-local tsgo/tsc attaches even with
+-- nothing on the global PATH -- the case the old global-only gate missed.
+vim.lsp.enable("tsgo")
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("typescript-inlay-hints", { clear = true }),
