@@ -11,6 +11,10 @@ vim.g.netrw_altfile = 1
 vim.opt.wrap = false
 vim.opt.termguicolors = true
 
+-- Shade column 81 as an 80-character guide. It never changes the text; toggle
+-- it per window with <leader>|.
+vim.opt.colorcolumn = "81"
+
 -- Default border for every floating window that does not set one itself:
 -- LSP hover/signature help, diagnostic floats, and the gitsigns hunk preview
 -- all pick this up, so the style lives here rather than in each plugin module.

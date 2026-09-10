@@ -53,6 +53,12 @@ vim.keymap.set("n", "<leader>u", function()
 	vim.pack.update()
 end, { silent = true, desc = "Update plugins" })
 
+vim.keymap.set("n", "<leader>|", function()
+	local on = vim.wo.colorcolumn == ""
+	vim.wo.colorcolumn = on and "81" or ""
+	vim.notify("Column guide " .. (on and "on" or "off"))
+end, { silent = true, desc = "Toggle column guide" })
+
 -- Prompt for an instruction, then ask Claude to rewrite the line (normal) or the
 -- selection (visual) in place.
 local function ai_edit(command)

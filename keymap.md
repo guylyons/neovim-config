@@ -15,6 +15,7 @@ Sources: [lua/core/keymaps.lua](lua/core/keymaps.lua), [lua/plugins/whichkey.lua
 | `<leader>w` | Normal | Pick a window (window-picker) |
 | `<leader>O` | Normal | Open the containing folder (`vim.ui.open`) |
 | `<leader>u` | Normal | Update plugins (`vim.pack.update()`) |
+| `<leader>\|` | Normal | Toggle the 80-column guide (`colorcolumn`) for the current window |
 | `<leader>t` | Normal | Open the undo tree (`nvim.undotree`); history persists across sessions |
 | `<D-g>` | Normal, Insert, Visual, Select, Cmdline | Escape (Cmd+G) |
 | `<leader>?` | Normal | Show buffer-local keymaps (which-key) |
