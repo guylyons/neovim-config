@@ -1,5 +1,6 @@
 vim.pack.add({
 	"https://github.com/NeogitOrg/neogit",
+	"https://github.com/coder/claudecode.nvim",
 	"https://github.com/yannvanhalewyn/jujutsu.nvim",
 	"https://github.com/L3MON4D3/LuaSnip",
 	"https://github.com/lewis6991/gitsigns.nvim",
@@ -8,6 +9,8 @@ vim.pack.add({
 	"https://github.com/hrsh7th/cmp-path",
 	"https://github.com/hrsh7th/nvim-cmp",
 	"https://github.com/nvim-lua/plenary.nvim",
+	"https://github.com/MunifTanjim/nui.nvim",
+	{ src = "https://github.com/nvim-neo-tree/neo-tree.nvim", version = "v3.x" },
 	"https://github.com/saadparwaiz1/cmp_luasnip",
 	"https://github.com/folke/flash.nvim",
 	"https://github.com/folke/which-key.nvim",
@@ -30,6 +33,7 @@ vim.pack.add({
 local plugin_modules = {
 	"plugins.treesitter",
 	"plugins.alpha",
+	"plugins.claudecode",
 	"plugins.emmet",
 	"plugins.flash",
 	"plugins.format",
@@ -41,6 +45,7 @@ local plugin_modules = {
 	"plugins.lualine",
 	"plugins.jujutsu",
 	"plugins.neogit",
+	"plugins.neo-tree",
 	"plugins.nvim-window-picker",
 	"plugins.lsp",
 	"plugins.typescript",
