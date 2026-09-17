@@ -10,14 +10,14 @@
 vim.loader.enable()
 
 -- Core editor configuration
-require("core.options") -- vim.opt settings: numbers, indentation, search, clipboard
-require("core.autocmds") -- event hooks: highlight on yank, trim trailing whitespace
-require("core.diagnostics") -- diagnostic display: signs, virtual text, underlines, floats
+require("core.options") -- leader keys, netrw, folds, numbers, clipboard, indentation
+require("core.autocmds") -- auto-clear hlsearch, restore cursor position, treesitter folds
+require("core.diagnostics") -- vim.diagnostic.config(); inline text comes from tiny.lua
 
 -- AI-assisted inline edit commands
 require("core.codex_edit").setup()
 require("core.ai_edit").setup()
 
 -- Plugins and mappings
-require("plugins") -- load and configure plugins
-require("core.keymaps") -- custom key mappings
+require("plugins") -- install via vim.pack, then set up each plugin module
+require("core.keymaps") -- custom key mappings (loaded last so plugins exist)

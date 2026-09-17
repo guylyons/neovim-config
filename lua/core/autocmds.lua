@@ -1,4 +1,5 @@
--- A highly efficient, zero-autocmd way to clear hlsearch
+-- Turn hlsearch on while using search keys (/ ? n N * # <CR>) and off after any
+-- other normal-mode key. vim.on_key avoids a CursorMoved autocmd.
 local search_keys = { ["<CR>"] = true, n = true, N = true, ["*"] = true, ["#"] = true, ["?"] = true, ["/"] = true }
 
 vim.on_key(function(char)
