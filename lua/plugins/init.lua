@@ -1,5 +1,21 @@
+-- fff ships a Rust core: fetch the prebuilt binary (or cargo-build it) after
+-- install/update. Registered before vim.pack.add so the first install fires it.
+vim.api.nvim_create_autocmd("PackChanged", {
+	group = vim.api.nvim_create_augroup("fff-build", { clear = true }),
+	callback = function(ev)
+		local name, kind = ev.data.spec.name, ev.data.kind
+		if name == "fff" and (kind == "install" or kind == "update") then
+			if not ev.data.active then
+				vim.cmd.packadd("fff")
+			end
+			require("fff.download").download_or_build_binary()
+		end
+	end,
+})
+
 vim.pack.add({
 	"https://github.com/NeogitOrg/neogit",
+	"https://github.com/dmtrKovalenko/fff",
 	"https://github.com/coder/claudecode.nvim",
 	"https://github.com/yannvanhalewyn/jujutsu.nvim",
 	"https://github.com/L3MON4D3/LuaSnip",
@@ -37,6 +53,7 @@ local plugin_modules = {
 	"plugins.emmet",
 	"plugins.flash",
 	"plugins.format",
+	"plugins.fff",
 	"plugins.fzf",
 	"plugins.gitsigns",
 	"plugins.go",

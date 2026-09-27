@@ -211,10 +211,13 @@ vim.keymap.set("n", "gd", function()
 	vim.lsp.buf.definition()
 end, { desc = "Go to definition" })
 
+-- fff re-roots its index to `cwd`; reopening in the same root is a no-op.
+vim.keymap.set("n", "<leader>f", function() require("fff").find_files({ cwd = get_root() }) end, { desc = "FFF files (project root)" })
+vim.keymap.set("n", "<leader>/", function() require("fff").live_grep({ cwd = get_root() }) end, { desc = "FFF live grep (project root)" })
+
 -- Fzf-lua setup is clean and tight
 local ok_fzf, fzf = pcall(require, "fzf-lua")
 if ok_fzf then
-	vim.keymap.set("n", "<leader>f", function() fzf.files({ cwd = get_root() }) end, { desc = "Fzf files (project root)" })
 	vim.keymap.set("n", "<leader>p", function() fzf.files({ cwd = get_root() }) end, { desc = "Fzf files (project root)" })
 	vim.keymap.set("n", "<leader>P", function() fzf.files({ cwd = get_cwd() }) end, { desc = "Fzf files (current dir)" })
 
