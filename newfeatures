@@ -1,0 +1,6 @@
+neovim 0.13
+:detach! — recover a Neovim session after an SSH connection is closed.
+:restart! — restart Neovim without the restoring session.
+ZR — the new shortcut for restarting Neovim.
+winpinned — keep a window from being closed by :only.
+:bcd — change the working directory of the current buffer.
