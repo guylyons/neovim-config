@@ -9,6 +9,7 @@ This repository is a personal Neovim configuration for Neovim 0.12+.
 - `lua/core/diagnostics.lua`: diagnostic display settings.
 - `lua/core/keymaps.lua`: custom keymaps and navigation helpers.
 - `lua/core/codex_edit.lua`: Codex range-edit integration (`:CodexEdit`, `:CodexLine`).
+- `lua/core/find_file.lua`: Emacs counsel-find-file style directory picker on fzf-lua (`<leader>j`).
 - `lua/plugins/init.lua`: plugin registration and loading through native `vim.pack`.
 - `lua/plugins/*.lua`: one file per plugin or feature area (`treesitter`, `lsp`, `format`, etc.).
 - `after/ftplugin/*`: filetype-specific buffer and indentation overrides.

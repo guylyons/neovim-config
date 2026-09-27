@@ -119,7 +119,6 @@ local function explore()
 end
 
 vim.keymap.set("n", "-", explore, { desc = "Explore current directory" })
-vim.keymap.set("n", "<leader>j", explore, { desc = "Explore current directory" })
 vim.keymap.set("n", "<leader>J", "<cmd>JJ ", { desc = "JJ command" })
 vim.keymap.set("n", "<leader>e", function()
 	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(get_cwd()) .. "/", "n")
@@ -227,6 +226,7 @@ if ok_fzf then
 	end, { desc = "Fzf all files (including ignored)" })
 
 	vim.keymap.set("n", "<leader>F", fzf.git_files, { desc = "Fzf git files" })
+	vim.keymap.set("n", "<leader>j", function() require("core.find_file").open(get_cwd()) end, { desc = "Find file (counsel-style)" })
 	vim.keymap.set("n", "<leader>c", fzf.commands, { desc = "Fzf commands" })
 	vim.keymap.set("n", "<leader>g", function() fzf.live_grep_native({ cwd = get_root() }) end, { desc = "Fzf live grep (project root)" })
 
