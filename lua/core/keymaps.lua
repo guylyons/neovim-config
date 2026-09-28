@@ -119,7 +119,6 @@ local function explore()
 end
 
 vim.keymap.set("n", "-", explore, { desc = "Explore current directory" })
-vim.keymap.set("n", "<leader>J", "<cmd>JJ ", { desc = "JJ command" })
 vim.keymap.set("n", "<leader>e", function()
 	vim.fn.feedkeys(":edit " .. vim.fn.fnameescape(get_cwd()) .. "/", "n")
 end, { desc = "Find file from current buffer directory" })
